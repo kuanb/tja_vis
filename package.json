@@ -1,0 +1,12 @@
+{
+  "name": "techjobs",
+  "version": "1.0.0",
+  "description": "analysis of responses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kuanb",
+  "license": "ISC",
+  "dependencies": {}
+}
