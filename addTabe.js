@@ -1,3 +1,11 @@
+String.prototype.replaceAll = function (search, replace) {
+  if (replace === undefined)
+    return this.toString();
+  return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+};
+
+
+
 var fs = require('fs');
 
 var placed = 0;
@@ -18,6 +26,9 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 				var cols = data.shift().split(',');
 
 				data.forEach(function (row, i) {
+					row = row.split(',');
+					console.log(row[3], row);
+
 					var first = row[0] || '';
 					var last = row[1] || '';
 					var tabe = {
@@ -37,12 +48,24 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 							var n = p.name.toLowerCase();
 
 							// janky - we assume that no two users have the same name (is this valid?)
-							if (n.indexOf(first) > -1 && n.indexOf(last) > -1 && hit == false && ppl[i].hasOwnProperty('tabe') == false) {
+							if (n.indexOf(first) > -1 && n.indexOf(last) > -1 ) { //&& ppl[i].hasOwnProperty('tabe') == false
 								ppl[i]['tabe'] = tabe;
 								hit = true;
 								placed += 1;
 							}
+
+							if (ppl[i].hasOwnProperty('tabe')) {
+								var m = isNaN(Number(ppl[i]['tabe'].math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')));
+								var r = isNaN(Number(ppl[i]['tabe'].read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')));
+								if (m || r) {
+									delete ppl[i]['tabe'];
+								}
+							}
 						});
+
+						if (hit == false) {
+							console.log('Failed to place: ', first, last);
+						}
 					} else {
 						console.log('The following name is missing either a first of last portion: ' + first + ' ' + last);
 					}
