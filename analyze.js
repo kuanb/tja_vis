@@ -17,16 +17,16 @@ xmlhttp.send();
 
 // globals
 var chart, ctx;
-var markers = new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18});
+// var markers = new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18});
 
 function parseLocs (data) {
   data.forEach(function (d, i) {
     if (d.loc.geocode !== null) {
       var m = L.circle(d.loc.geocode, 10);
-      markers.addLayer(m);
+      m.addTo(map);
+      // markers.addLayer(m);
     }
     if (data.length - 1 == i) {
-      map.addLayer(markers);
       buildChart('race');
     }
   });
