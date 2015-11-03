@@ -2,22 +2,23 @@
 <html>
 	<head>
 
-<!-- FOR INTERNET
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 		
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster-src.js"></script>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
- -->
 
 
 
+
+<!-- WHEN NO INTERNET
 		<script src="lib/jquery-1.9.1.min.js"></script>
 
 		<script src="lib/bootstrap.min.js"></script>
@@ -29,8 +30,7 @@
 		<script src="lib/markerclusterer_compiled.js"></script>
 
 		<script src="lib/Chart.min.js"></script>
-
-
+ -->
 
 		<link rel="stylesheet" href="style.css" />
 		<script src="analyze.js"></script>
@@ -64,12 +64,37 @@
 		  </div>
 
 		  <div class="btn pull-right" onclick="toggleCB()">
-		  	<input type="checkbox" id="tabeFilter" checked="false"/> Filter by Tabe 
+		  	<input type="checkbox" id="tabeFilter"/>
+		  	Filter by Tabe 
 		  </div>
+
+		  <div class="btn pull-right">
+		  	Threshold Math: 
+		  	<input type="number" id="threshMath"
+		  		min="0" max="15" step="0.5" value="11">
+		  	Reading: 
+		  	<input type="number" id="threshRead" 
+		  		min="0" max="15" step="0.5" value="10">
+		  </div>
+		  
 
 		  <p>Use the dropdown to select which variable you want to visualize.</p>
 
 		  <canvas id="chart"></canvas>
+
+
+
+			<div id="splashBlock" style="position: fixed; width: 100%; height: 100%; z-index: 99999999; top: 0px; left: 0px; background-color: #2B3856; display: block; overflow: hidden; text-align: center;padding-top: 200px; color: #FFF">
+				Intended for Microsoft TCE only - click to continue.
+
+				<br><br><br><br>
+
+				<button type="button" class="btn btn-info btn-lg"
+					onclick="removeSplash()">
+				  <span class="glyphicon glyphicon-object-align-bottom"></span> View Results
+				</button>
+			</div>
+
 		</div>
 
 
@@ -77,10 +102,15 @@
 
 	<script>
 		var map = L.map('map').setView([40.75, -73.85], 11);
-		// L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
+		map.scrollWheelZoom.disable();
+		L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
 		function toggleCB () {
 			$('#tabeFilter')[0].checked = !$('#tabeFilter')[0].checked;
+		};
+
+		function removeSplash () {
+			$('#splashBlock')[0].remove();
 		};
 	</script>
 

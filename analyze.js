@@ -17,16 +17,24 @@ xmlhttp.send();
 
 // globals
 var chart, ctx;
-// var markers = new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18});
+var markers = {
+  all: new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18}),
+  f: new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18})
+};
 
 function parseLocs (data) {
   data.forEach(function (d, i) {
     if (d.loc.geocode !== null) {
-      var m = L.circle(d.loc.geocode, 10);
-      m.addTo(map);
-      // markers.addLayer(m);
+      var m = L.circle(d.loc.geocode, 15, {
+        color: '#FF0000',
+        fillOpacity: 1,
+      });
+      d.props = d;
+      markers.all.addLayer(m);
+      markers.f.addLayer(m);
     }
     if (data.length - 1 == i) {
+      map.addLayer(markers.all);
       buildChart('race');
     }
   });
@@ -34,7 +42,7 @@ function parseLocs (data) {
 
 
 function buildData (arg) {
-  var runFilter = $('#tabeFilter')[0].checked
+  var runFilter = $('#tabeFilter')[0].checked;
 
   var dd = data.map(function (d, i) {
     var res;
@@ -52,8 +60,6 @@ function buildData (arg) {
       if (yr < 100)
         yr = 1900 + yr;
       res = 2016 - yr;
-      if (res == 116)
-        console.log(d.dob.split('/'));
     } else if (arg == 'tabe_math' || arg == 'tabe_read') {
       if (d.hasOwnProperty('tabe')) {
         if (arg == 'tabe_math') {
@@ -64,6 +70,8 @@ function buildData (arg) {
         res = res.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '');
         if (isNaN(Number(res))) {
           console.log(i, d);
+        } else if (runFilter) {
+          res = Math.round(Number(res));
         }
       } else {
         res = 'No Score';
@@ -87,7 +95,6 @@ function buildData (arg) {
     keys = keys.sort(function (a, b) {
       if (a == 'No Score') { a = "100"; }
       if (b == 'No Score') { b = "100"; }
-      console.log(Number(a), Number(b));
       return Number(a) - Number(b);
     });
   }
