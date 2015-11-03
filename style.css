@@ -12,6 +12,11 @@ body {
   height: 450px;
 }
 
+#chart3, #chart4 {
+  width: 47%;
+  background-color: red;
+}
+
 #map {
   width: 100%;
   min-height: 500px;
