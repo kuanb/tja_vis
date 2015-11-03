@@ -4,6 +4,10 @@ String.prototype.replaceAll = function (search, replace) {
   return this.replace(new RegExp('[' + search + ']', 'g'), replace);
 };
 
+function roundHalf(num) {
+  return Math.round(num*2)/2;
+}
+
 var data = '';
 var xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function(){
@@ -89,17 +93,16 @@ function buildData (arg) {
           res = String(d.tabe.read);
         }
         res = res.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '');
-        if (isNaN(Number(res))) {
-          console.log(i, d);
-        } else if (runFilter) {
-          res = Math.round(Number(res));
-        }
+        res = roundHalf(Number(res));
+        console.log(res);
       } else {
         res = 'No Score';
       }
     } else {
       res = d[arg];
-      if (res == '') res = 'No Answer';
+      if (res == '') {
+        res = 'No Answer';
+      }
     }
 
     if (runFilter) {
@@ -124,11 +127,34 @@ function buildData (arg) {
   } else if (arg == 'avg_score') {
     keys = ['10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'];
   } else if (arg == 'tabe_math' || arg == 'tabe_read') {
-    keys = keys.sort(function (a, b) {
-      if (a == 'No Score') { a = "100"; }
-      if (b == 'No Score') { b = "100"; }
-      return Number(a) - Number(b);
-    });
+    // keys = keys.sort(function (a, b) {
+    //   if (a == 'No Score') { a = "100"; }
+    //   else if (b == 'No Score') { b = "100"; }
+    //   else {
+    //     a = a.replaceAll(' ()', '').replaceAll(' (Passed)', '');
+    //     b = b.replaceAll(' (Failed)', '').replaceAll(' (Passed)', '');
+    //   }
+    //   return Number(a) - Number(b);
+    // });
+
+    if (runFilter) {
+      keys1 = [];
+      keys2 = [];
+      var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
+      aa.forEach(function (val) {
+        keys1.push(val + ' (Failed)');
+        keys2.push(val + ' (Passed)');
+      });
+      keys = keys1.concat(keys2);
+      keys.push('No Score');
+    } else {
+      keys = [];
+      var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
+      aa.forEach(function (val) {
+        keys.push(val);
+      });
+      keys.push('No Score');
+    }
   }
 
   var c = [];
