@@ -13,9 +13,13 @@ var xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function(){
 	if(xmlhttp.status == 200 && xmlhttp.readyState == 4){
 		data = JSON.parse(xmlhttp.responseText);
-		parseLocs(data);
-		canvas2Analysis(data);
-		buildCorrAnalysis(90);
+		var to = 0;
+		if (map.addLayer == undefined) to = 1000;
+		setTimeout(function () {
+			parseLocs(data);
+			canvas2Analysis(data);
+			buildCorrAnalysis(90);
+		}, to);
 	}
 };
 xmlhttp.open("GET", "anonResp.json", true);
