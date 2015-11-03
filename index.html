@@ -85,17 +85,34 @@
 
 
 			<h4>Screendoor Comparison</h4>
-			<p>Analyzing scoring on Screendoor against scores on TABE tests. Grey is reading, blue is math, and red is our average score froms Screendoor mapped to the TABE score values.</p>
+			<p>Analyzing scoring on Screendoor against scores on TABE tests. <span style="font-weight:bold;color:grey">Grey</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:red">red</span> is our average score froms Screendoor mapped to the TABE score values.</p>
 
 			<canvas id="chart2" class="chart"></canvas>
 
-			<h4>Screendoor Comparison</h4>
-			<p>Analyzing scoring on Screendoor against scores on TABE tests. Grey is reading, blue is math, and red is our average score froms Screendoor mapped to the TABE score values.</p>
+			<h4>Predictive Correlation Analysis</h4>
+			<p style="max-width: 43%; float: left; padding-right: 20px">
+				Do our scores have any correlation with the TABE results? Run calculations by average score. Early results suggest Screendoor average scores don't correlate significantly with TABE scoring.
+
+				<br><br>
+
+				Threshold Screendoor Score (%): 
+				<input type="number" id="threshScreendoor"
+					min="0" max="100" step="10" value="90">
+				<button onclick="buildCorrAnalysis()">Rerun</button>
+
+				<br><br>
+
+				<br>Explanation of graph: </b><br>
+				<span style="font-weight:bold;color:red">Red</span> values indicate number of applications that fall below the set threshold for math or reading. <span style="font-weight:bold;color:blue">Blue</span> represents the count of those that are at or above that threshold.
+
+				<br>
+				The first two sets of bars are those that fall under your set Screendoor rank and the second two sets bars represent the results that lie over the set %.
+
+
+			</p>
 			
-			<center>
-				<canvas id="chart3" class="chart"></canvas>
-				<canvas id="chart4" class="chart"></canvas>
-			</center>
+			<canvas id="chart3" class="chart"></canvas>
+			
 
 
 

@@ -14,7 +14,7 @@ body {
 
 #chart3, #chart4 {
   width: 47%;
-  background-color: red;
+  float: left;
 }
 
 #map {

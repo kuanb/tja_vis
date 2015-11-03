@@ -15,6 +15,7 @@ xmlhttp.onreadystatechange = function(){
 		data = JSON.parse(xmlhttp.responseText);
 		parseLocs(data);
 		canvas2Analysis(data);
+		buildCorrAnalysis(90);
 	}
 };
 xmlhttp.open("GET", "anonResp.json", true);
@@ -286,7 +287,86 @@ function canvas2Analysis (dd) {
 }
 
 
+function buildCorrAnalysis (compareScore) {
+	var d = data;
+	var tm = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshMath')[0].value);
 
+	if (compareScore == undefined)
+		compareScore = Number($('#threshScreendoor')[0].value)
+
+	d = d.filter(function (ea) {
+		var hasVals = (ea.hasOwnProperty('tabe') && ea.tabe.hasOwnProperty('math') && ea.tabe.hasOwnProperty('read'));
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		return hasVals && !isNaN(Number(nn));
+	});
+	
+	var dUnder = d.filter(function (ea) {
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		return compareScore <= nn;
+	});
+	var dOver = d.filter(function (ea) {
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		return compareScore > nn;
+	});
+	
+	var DUmathAgg = {pass: 0, fail: 0};
+	var DUreadAgg = {pass: 0, fail: 0};
+	dUnder.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm) DUmathAgg.pass += 1;
+		else DUmathAgg.fail += 1;
+
+		if (r >= tr) DUreadAgg.pass += 1;
+		else DUreadAgg.fail += 1;
+	});
+	
+	var DOmathAgg = {pass: 0, fail: 0};
+	var DOreadAgg = {pass: 0, fail: 0};
+	dUnder.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm) DOmathAgg.pass += 1;
+		else DOmathAgg.fail += 1;
+
+		if (r >= tr) DOreadAgg.pass += 1;
+		else DOreadAgg.fail += 1;
+	});
+
+	var fails = [DUmathAgg.fail, DUreadAgg.fail, DOmathAgg.fail, DUreadAgg.fail];
+	var passes = [DUmathAgg.pass, DUreadAgg.pass, DOmathAgg.pass, DUreadAgg.pass];
+
+	var compareBars = {
+	  labels: ["UNDER (Math)", "UNDER (Read)", "(OVER) Math", "(OVER) Read"],
+	  datasets: [
+	      {
+          fillColor: "rgba(255, 0, 0, 0.15)",
+          strokeColor: "rgba(255, 0, 0, 0.25)",
+          highlightFill: "rgba(255, 0, 0, 0.75)",
+          highlightStroke: "rgba(255, 0, 0, 1)",
+          data: fails
+	      },
+	      {
+          fillColor: "rgba(151,187,205,0.5)",
+          strokeColor: "rgba(151,187,205,0.8)",
+          highlightFill: "rgba(151,187,205,0.75)",
+          highlightStroke: "rgba(151,187,205,1)",
+          data: passes
+	      }
+	  ]
+	};
+
+
+	if (chart3Bars !== undefined && typeof chart3Bars == 'object') {
+		chart3Bars.destroy();
+	}
+
+	ctx = document.getElementById("chart3").getContext("2d");
+	var chart3Bars = new Chart(ctx).Bar(compareBars, {});
+};
 
 
 
