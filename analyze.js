@@ -303,11 +303,11 @@ function buildCorrAnalysis (compareScore) {
 	
 	var dUnder = d.filter(function (ea) {
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
-		return compareScore <= nn;
+		return nn < compareScore;
 	});
 	var dOver = d.filter(function (ea) {
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
-		return compareScore > nn;
+		return nn >= compareScore;
 	});
 	
 	var DUmathAgg = {pass: 0, fail: 0};
@@ -333,11 +333,13 @@ function buildCorrAnalysis (compareScore) {
 		else DOmathAgg.fail += 1;
 
 		if (r >= tr) DOreadAgg.pass += 1;
-		else DOreadAgg.fail += 1;
+		else {
+			console.log(r, tr,DOreadAgg.fail);
+			DOreadAgg.fail += 1; }
 	});
 
-	var fails = [DUmathAgg.fail, DUreadAgg.fail, DOmathAgg.fail, DUreadAgg.fail];
-	var passes = [DUmathAgg.pass, DUreadAgg.pass, DOmathAgg.pass, DUreadAgg.pass];
+	var fails = [DUmathAgg.fail, DUreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
+	var passes = [DUmathAgg.pass, DUreadAgg.pass, DOmathAgg.pass, DOreadAgg.pass];
 
 	var compareBars = {
 	  labels: ["UNDER (Math)", "UNDER (Read)", "(OVER) Math", "(OVER) Read"],
