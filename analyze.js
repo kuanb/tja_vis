@@ -85,7 +85,7 @@ function buildData (arg) {
 			var yr = Number(d.dob.split('/').pop());
 			if (yr < 100)
 				yr = 1900 + yr;
-			res = 2016 - yr;
+			res = String(2016 - yr);
 		} else if (arg == 'tabe_math' || arg == 'tabe_read') {
 			if (d.hasOwnProperty('tabe')) {
 				if (arg == 'tabe_math') {
@@ -125,48 +125,31 @@ function buildData (arg) {
 	var keys = Object.keys(counts);
 
 	if (arg == 'dob') {
-		keys = Array.apply(null, {length: 70}).map(Number.call, Number)
+		keys = Array.apply(null, {length: 50}).map(Number.call, Number);
+		keys = keys.map(function (k) {return k + 18; });
+		if (runFilter) keys = passFailDouble(keys);
 	} else if (arg == 'avg_score') {
 		keys = ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'];
-		if (runFilter) {
-			var k1 = [];
-			var k2 = [];
-			keys.forEach(function (k) {
-				k1.push(k + ' (Passed)');
-				k2.push(k + ' (Failed)');
-			});
-			keys = k1.concat(k2);
-		}
+		if (runFilter) keys = passFailDouble(keys);
 	} else if (arg == 'tabe_math' || arg == 'tabe_read') {
-		// keys = keys.sort(function (a, b) {
-		//   if (a == 'No Score') { a = "100"; }
-		//   else if (b == 'No Score') { b = "100"; }
-		//   else {
-		//     a = a.replaceAll(' ()', '').replaceAll(' (Passed)', '');
-		//     b = b.replaceAll(' (Failed)', '').replaceAll(' (Passed)', '');
-		//   }
-		//   return Number(a) - Number(b);
-		// });
-
+		keys = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
 		if (runFilter) {
-			keys1 = [];
-			keys2 = [];
-			var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
-			aa.forEach(function (val) {
-				keys1.push(val + ' (Failed)');
-				keys2.push(val + ' (Passed)');
-			});
-			keys = keys1.concat(keys2);
-			keys.push('No Score');
+			keys = passFailDouble(keys);
 		} else {
-			keys = [];
-			var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
-			aa.forEach(function (val) {
-				keys.push(val);
-			});
 			keys.push('No Score');
 		}
 	}
+
+	function passFailDouble (keys) {
+		var k1 = [];
+		var k2 = [];
+		keys.forEach(function (k) {
+			k1.push(k + ' (Passed)');
+			k2.push(k + ' (Failed)');
+		});
+		keys = k1.concat(k2);
+		return keys;
+	};
 
 	var c = [];
 	keys.forEach(function (k, ki) { 
