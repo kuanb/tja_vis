@@ -334,7 +334,6 @@ function buildCorrAnalysis (compareScore) {
 
 		if (r >= tr) DOreadAgg.pass += 1;
 		else {
-			console.log(r, tr,DOreadAgg.fail);
 			DOreadAgg.fail += 1; }
 	});
 
