@@ -43,6 +43,27 @@ function parseLocs (data) {
 
 function buildData (arg) {
   var runFilter = $('#tabeFilter')[0].checked;
+  var tm = Number($('#threshMath')[0].value);
+  var tr = Number($('#threshMath')[0].value);
+
+  if (runFilter) {
+    if (isNaN(tm) || isNaN(tr)) {
+      alert('Non-number value entered for threshold value. Cannot run analysis.');
+      return false;
+    };
+
+    var replace = [];
+    data.forEach(function (d, i) {
+      if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
+        var m = Number(d.tabe.math);
+        var r = Number(d.tabe.read);
+        if (!isNaN(m) && !isNaN(r)) {
+          replace.push(d);
+        }
+      }
+    });
+    data = replace;
+  };
 
   var dd = data.map(function (d, i) {
     var res;
@@ -80,12 +101,23 @@ function buildData (arg) {
       res = d[arg];
       if (res == '') res = 'No Answer';
     }
+
+    if (runFilter) {
+      var m = Number(d.tabe.math);
+      var r = Number(d.tabe.read);
+      if (m >= tm && r >= tr) {
+        res += ' (Passed)';
+      } else {
+        res += ' (Failed)';
+      }
+    }
+
     return res;
   });
   
   var counts = {};
   dd.forEach(function (x) { counts[x] = (counts[x] || 0)+1; });
-  var keys = Object.keys(counts);
+  var keys = Object.keys(counts).sort();
 
   if (arg == 'dob') {
     keys = Array.apply(null, {length: 70}).map(Number.call, Number)
