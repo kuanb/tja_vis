@@ -99,7 +99,10 @@ function buildData (arg) {
       } else {
         res = 'No Score';
       }
+    } else if (arg == 'pipeline') {
+      res = d.pipeline.split(',')[0].split('(')[0].replaceAll('"', '');
     } else {
+      console.log('foo');
       res = d[arg];
       if (res == '') {
         res = 'No Answer';
