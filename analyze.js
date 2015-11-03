@@ -325,7 +325,7 @@ function buildCorrAnalysis (compareScore) {
 	
 	var DOmathAgg = {pass: 0, fail: 0};
 	var DOreadAgg = {pass: 0, fail: 0};
-	dUnder.forEach(function (ea) {
+	dOver.forEach(function (ea) {
 		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		
