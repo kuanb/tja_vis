@@ -119,13 +119,23 @@ function buildData (arg) {
   });
   
   var counts = {};
-  dd.forEach(function (x) { counts[x] = (counts[x] || 0)+1; });
+  dd.forEach(function (x) { counts[x] = (counts[x] || 0) + 1; });
   var keys = Object.keys(counts).sort();
 
   if (arg == 'dob') {
     keys = Array.apply(null, {length: 70}).map(Number.call, Number)
   } else if (arg == 'avg_score') {
     keys = ['10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'];
+    if (runFilter) {
+      var kk = [];
+      keys.forEach(function (val) {
+        kk.push(val + ' (Failed)');
+      });
+      keys.forEach(function (val) {
+        kk.push(val + ' (Passed)');
+      });
+      var keys = kk;
+    }
   } else if (arg == 'tabe_math' || arg == 'tabe_read') {
     // keys = keys.sort(function (a, b) {
     //   if (a == 'No Score') { a = "100"; }
