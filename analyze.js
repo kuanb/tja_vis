@@ -14,6 +14,7 @@ xmlhttp.onreadystatechange = function(){
   if(xmlhttp.status == 200 && xmlhttp.readyState == 4){
     data = JSON.parse(xmlhttp.responseText);
     parseLocs(data);
+    canvas2Analysis(data);
   }
 };
 xmlhttp.open("GET", "anonResp.json", true);
@@ -205,3 +206,106 @@ function randCol() {
     }
     return color;
 }
+
+function canvas2Analysis (data) {
+
+  var keys = [];
+  var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
+  aa.forEach(function (val) {
+    keys.push(val);
+  });
+
+  var replace = [];
+  data.forEach(function (d, i) {
+    if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
+      var m = Number(d.tabe.math);
+      var r = Number(d.tabe.read);
+      if (!isNaN(m) && !isNaN(r)) {
+        replace.push(d);
+      }
+    }
+  });
+  data = replace;
+
+  var as = data.map(function (d, i) {
+    d.avg_score = Number(d.avg_score.replaceAll('%', ''));
+    if (isNaN(d.avg_score)) {
+      d.avg_score = 0;
+    }
+    d.avg_score = Math.min((d.avg_score/100*14.5), 14.5);
+    return Number(roundHalf(d.avg_score));
+  });
+  var countsAS = {};
+  var cAS = [];
+  as.forEach(function (x) { countsAS[x] = (countsAS[x] || 0) + 1; });
+  keys.forEach(function (k, ki) { 
+    cAS.push(countsAS[k] || 0);
+  });
+
+  var dm = data.map(function (d, i) {
+    return Number(roundHalf(Number(
+      String(d.tabe.math).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+    )));
+  });
+  var countsM = {}; 
+  var cM = [];
+  dm.forEach(function (x) { countsM[x] = (countsM[x] || 0) + 1; });
+  keys.forEach(function (k, ki) { 
+    cM.push(countsM[k] || 0);
+  });
+
+  var dr = data.map(function (d, i) {
+    return Number(roundHalf(Number(
+      String(d.tabe.read).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+    )));
+  });
+  var countsR = {};
+  var cR = [];
+  dr.forEach(function (x) { countsR[x] = (countsR[x] || 0) + 1; });
+  keys.forEach(function (k, ki) { 
+    cR.push(countsR[k] || 0);
+  });
+
+
+  var data = {
+    labels: keys,
+    datasets: [
+      {
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: "rgba(220,220,220,1)",
+        pointColor: "rgba(220,220,220,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: cM
+      },
+      {
+        fillColor: "rgba(151,187,205,0.2)",
+        strokeColor: "rgba(151,187,205,1)",
+        pointColor: "rgba(151,187,205,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(151,187,205,1)",
+        data: cR
+      },
+      {
+        fillColor: "rgba(255, 0, 0, 0.2)",
+        strokeColor: "rgba(255, 0, 0, 0.25)",
+        pointColor: "rgba(255, 0, 0, 0.25)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(255, 0, 0, 0.25)",
+        data: cAS
+      }
+    ]
+  };
+
+  ctx = document.getElementById("chart2").getContext("2d");
+  var myLineChart = new Chart(ctx).Line(data, {});
+}
+
+
+
+
+
+
