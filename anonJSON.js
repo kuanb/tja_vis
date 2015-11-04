@@ -26,6 +26,7 @@ fs.readFile('responses.json', 'utf-8', function (err, data) {
 				exposure: d.exposure,
 				home_computer: d.home_computer,
 				home_internet: d.home_internet,
+				submitted: d.submitted,
 				tabe: d.tabe
 			}
 		});

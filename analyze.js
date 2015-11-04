@@ -86,6 +86,13 @@ function buildData (arg) {
 			} else {
 				res = d.employment;
 			}
+		} else if (arg == 'submitted') {
+			res = new Date(d.submitted);
+			var mo = res.getMonth();
+			if (mo < 10) mo = '0' + String(mo);
+			var da = res.getDate();
+			if (da < 10) da = '0' + String(da);
+			res = mo + '-' + da;
 		} else if (arg == 'dob') {
 			var yr = Number(d.dob.split('/').pop());
 			if (yr < 100)
@@ -132,6 +139,16 @@ function buildData (arg) {
 	if (arg == 'dob') {
 		keys = Array.apply(null, {length: 50}).map(Number.call, Number);
 		keys = keys.map(function (k) {return k + 18; });
+		if (runFilter) keys = passFailDouble(keys);
+	} else if (arg == 'submitted') {
+		var ks_temp = getDatesRangeArray(moment(new Date('Sep 29 2015')), moment(new Date('Oct 31 2015')), 'days', 1);
+		keys = ks_temp.map(function (ks) {
+			var mo = ks.month();
+			if (mo < 10) mo = '0' + String(mo);
+			var da = ks.date();
+			if (da < 10) da = '0' + String(da);
+			return mo + '-' + da;
+		});
 		if (runFilter) keys = passFailDouble(keys);
 	} else if (arg == 'avg_score') {
 		keys = ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'];
@@ -289,6 +306,20 @@ function canvas2Analysis (dd) {
 	ctx = document.getElementById("chart2").getContext("2d");
 	var myLineChart = new Chart(ctx).Line(data, {});
 }
+
+function getDatesRangeArray (startDate, endDate, interval, total) {
+  var config = {
+      interval: interval || 'days',
+      total: total || 1
+    },
+    dateArray = [],
+    currentDate = startDate.clone();
+  while (currentDate < endDate) {
+    dateArray.push(currentDate);
+    currentDate = currentDate.clone().add(config.total, config.interval);
+  }
+  return dateArray;
+};
 
 
 function buildCorrAnalysis (compareScore) {
