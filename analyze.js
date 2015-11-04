@@ -448,6 +448,7 @@ function canvas4Analysis () {
 		else counts[x.avg].f += 1;
 	});
 	var keys = ['0','10','20','30','40','50','60','70','80','90','100'];
+
 	var pct = [];
 	keys.forEach(function (k) {
 		if (counts[k] == undefined) {
@@ -460,23 +461,43 @@ function canvas4Analysis () {
 		}
 	});
 
+	var ct = [];
+	keys.forEach(function (k) {
+		if (counts[k] == undefined) {
+			ct.push(0);
+		} else {
+			var all = counts[k].f + counts[k].p;
+			ct.push(all);
+		}
+	});
+
+	keys = ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'];
+
 	var line = {
 		labels: keys,
 		datasets: [{
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(151,187,205,1)",
+				pointColor: "rgba(151,187,205,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(151,187,205,1)",
+				data: pct
+		}, {
 				fillColor: "rgba(220,220,220,0.2)",
 				strokeColor: "rgba(220,220,220,1)",
 				pointColor: "rgba(220,220,220,1)",
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: pct
+				data: ct
 		}]
 	};
 
 	if (chart4 !== undefined && typeof chart4 == 'object') {
 		chart4.destroy();
 	}
-	
+
 	var ctx = document.getElementById("chart4").getContext("2d");
 	chart4 = new Chart(ctx).Line(line, {});
 };
