@@ -18,6 +18,7 @@ xmlhttp.onreadystatechange = function(){
 		setTimeout(function () {
 			parseLocs(data);
 			canvas2Analysis(data);
+			canvas4Analysis();
 			buildCorrAnalysis(90);
 		}, to);
 	}
@@ -26,7 +27,7 @@ xmlhttp.open("GET", "anonResp.json", true);
 xmlhttp.send();
 
 // globals
-var chart, ctx;
+var chart, chart3, chart4;
 var markers = {
 	all: new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18}),
 	f: new L.MarkerClusterGroup({ spiderfyOnMaxZoom: true, disableClusteringAtZoom: 18})
@@ -197,7 +198,7 @@ function buildChart (arg) {
 		chart.destroy();
 	}
 	var dd = buildData(arg);
-	ctx = document.getElementById("chart").getContext("2d");
+	var ctx = document.getElementById("chart").getContext("2d");
 	chart = new Chart(ctx).Bar(dd, { barShowStroke: false });
 };
 
@@ -303,7 +304,7 @@ function canvas2Analysis (dd) {
 		]
 	};
 
-	ctx = document.getElementById("chart2").getContext("2d");
+	var ctx = document.getElementById("chart2").getContext("2d");
 	var myLineChart = new Chart(ctx).Line(data, {});
 }
 
@@ -340,9 +341,13 @@ function buildCorrAnalysis (compareScore) {
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
 		return nn < compareScore;
 	});
+	var dEqual = d.filter(function (ea) {
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		return nn == compareScore;
+	});
 	var dOver = d.filter(function (ea) {
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
-		return nn >= compareScore;
+		return nn > compareScore;
 	});
 	
 	var DUmathAgg = {pass: 0, fail: 0};
@@ -358,6 +363,19 @@ function buildCorrAnalysis (compareScore) {
 		else DUreadAgg.fail += 1;
 	});
 	
+	var DEmathAgg = {pass: 0, fail: 0};
+	var DEreadAgg = {pass: 0, fail: 0};
+	dEqual.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm) DEmathAgg.pass += 1;
+		else DEmathAgg.fail += 1;
+
+		if (r >= tr) DEreadAgg.pass += 1;
+		else DEreadAgg.fail += 1;
+	});
+	
 	var DOmathAgg = {pass: 0, fail: 0};
 	var DOreadAgg = {pass: 0, fail: 0};
 	dOver.forEach(function (ea) {
@@ -368,15 +386,15 @@ function buildCorrAnalysis (compareScore) {
 		else DOmathAgg.fail += 1;
 
 		if (r >= tr) DOreadAgg.pass += 1;
-		else {
-			DOreadAgg.fail += 1; }
+		else DOreadAgg.fail += 1;
+
 	});
 
-	var fails = [DUmathAgg.fail, DUreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
-	var passes = [DUmathAgg.pass, DUreadAgg.pass, DOmathAgg.pass, DOreadAgg.pass];
+	var fails = [DUmathAgg.fail, DUreadAgg.fail, DEmathAgg.fail, DEreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
+	var passes = [DUmathAgg.pass, DUreadAgg.pass, DEmathAgg.pass, DEreadAgg.pass, DOmathAgg.pass, DOreadAgg.pass];
 
 	var compareBars = {
-	  labels: ["UNDER (Math)", "UNDER (Read)", "(OVER) Math", "(OVER) Read"],
+	  labels: ["UNDER (Math)", "UNDER (Read)", "EQUAL (Math)", "EQUAL (Read)", "OVER (Math)", "OVER (Read)"],
 	  datasets: [
 	      {
           fillColor: "rgba(255, 0, 0, 0.15)",
@@ -396,12 +414,71 @@ function buildCorrAnalysis (compareScore) {
 	};
 
 
-	if (chart3Bars !== undefined && typeof chart3Bars == 'object') {
-		chart3Bars.destroy();
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
 	}
 
-	ctx = document.getElementById("chart3").getContext("2d");
-	var chart3Bars = new Chart(ctx).Bar(compareBars, {});
+	var ctx = document.getElementById("chart3").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
+};
+
+function canvas4Analysis () {
+	var d = data;
+	var tm = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshMath')[0].value);
+
+	d = d.filter(function (ea) {
+		var hasVals = (ea.hasOwnProperty('tabe') && ea.tabe.hasOwnProperty('math') && ea.tabe.hasOwnProperty('read'));
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		return hasVals && !isNaN(nn);
+	}).map(function (ea) {
+		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var pt = (m >= tm) && (r >= tr);
+		return {avg: nn, pass: pt};
+	});
+
+	var counts = {};
+	d.forEach(function (x) { 
+		if (counts[x.avg] == undefined) {
+			counts[x.avg] = { n: 0, p: 0, f: 0 };
+		}
+		if (x.pass) counts[x.avg].p += 1;
+		else counts[x.avg].f += 1;
+	});
+	var keys = ['0','10','20','30','40','50','60','70','80','90','100'];
+	var pct = [];
+	keys.forEach(function (k) {
+		if (counts[k] == undefined) {
+			pct.push(0);
+		} else {
+			var all = counts[k].f + counts[k].p;
+			var pass = counts[k].p/all * 100;
+			pass = pass.toFixed(3);
+			pct.push(pass);
+		}
+	});
+
+	var line = {
+		labels: keys,
+		datasets: [{
+				fillColor: "rgba(220,220,220,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: pct
+		}]
+	};
+
+	if (chart4 !== undefined && typeof chart4 == 'object') {
+		chart4.destroy();
+	}
+	
+	var ctx = document.getElementById("chart4").getContext("2d");
+	chart4 = new Chart(ctx).Line(line, {});
 };
 
 

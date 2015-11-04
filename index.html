@@ -93,31 +93,49 @@
 
 			<canvas id="chart2" class="chart"></canvas>
 
-			<h4>Predictive Correlation Analysis</h4>
-			<p style="max-width: 43%; float: left; padding-right: 20px">
-				Do our scores have any correlation with the TABE results? Run calculations by average score. Early results suggest Screendoor average scores don't correlate significantly with TABE scoring.
-
-				<br><br>
-
-				Threshold Screendoor Score (%): 
-				<input type="number" id="threshScreendoor"
-					min="0" max="100" step="10" value="90">
-				<button onclick="buildCorrAnalysis()">Rerun</button>
-
-				<br><br>
-
-				<br>Explanation of graph: </b><br>
-				<span style="font-weight:bold;color:red">Red</span> values indicate number of applications that fall below the set threshold for math or reading. <span style="font-weight:bold;color:blue">Blue</span> represents the count of those that are at or above that threshold.
-
-				<br><br>
-
-				The first two sets of bars are those that fall under your set Screendoor rank and the second two sets bars represent the results that lie over the set %.
 
 
-			</p>
-			
-			<canvas id="chart3" class="chart"></canvas>
-			
+
+			<div style="height: 450px">
+				<h4>Predictive Correlation Analysis</h4>
+				<p style="max-width: 43%; float: left; padding-right: 20px">
+					Do our scores have any correlation with the TABE results? Run calculations by average score. Early results suggest Screendoor average scores don't correlate significantly with TABE scoring.
+
+					<br><br>
+
+					Threshold Screendoor Score (%): 
+					<input type="number" id="threshScreendoor"
+						min="0" max="100" step="10" value="90">
+					<button onclick="buildCorrAnalysis()">Rerun</button>
+
+					<br><br>
+
+					<br>Explanation of graph: </b><br>
+					<span style="font-weight:bold;color:red">Red</span> values indicate number of applications that fall below the set threshold for math or reading. <span style="font-weight:bold;color:blue">Blue</span> represents the count of those that are at or above that threshold.
+
+					<br><br>
+
+					The first two sets of bars are those that fall under your set Screendoor rank and the second two sets bars represent the results that lie over the set %.
+				</p>
+				
+				<canvas id="chart3" class="chart"></canvas>
+			</div>
+
+
+
+
+			<div><br>
+				<h4>X-Y Distribution of TABE v. Screendoor</h4>
+				<button onclick="canvas4Analysis()" class="pull-right">
+					Rerun</button>
+
+				<p>Screendoor scores along the bottom x-axis and percentage that passed the TABE test along the vertical. Adjust threshold values at the top of page and rerun to calculate against different TABE pass values.</p>
+
+				<canvas id="chart4" class="chart"></canvas>
+			</div>
+
+
+
 
 
 
