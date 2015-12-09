@@ -105,11 +105,19 @@
 
 
 			<h4>Screendoor Comparison - Different Scale</h4>
-			<p><i>Same chart as above, but we are ignoring the values that scored less than 0.5 and shrinking the y scale so we can see in better detail the other results.</i></p>
+			<p><i>Same chart as above, but we are ignoring the values that scored less than 2 and shrinking the y scale so we can see in better detail the other results.</i></p>
 			<p>Analyzing scoring on Screendoor against scores on TABE tests. <span style="font-weight:bold;color:#1CE430">Green</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:grey">grey</span> is our average score froms Screendoor mapped to the TABE score values.</p>
 			<p>Per request from Saron an addition has been made to also include joint values. The new <span style="font-weight:bold;color:#FF00FF">pink</span> line indicates counts for the number of individuals for which the lowest of their joint scores is equal to that x-value.</p>
 
 			<canvas id="chart2b" class="chart"></canvas>
+
+
+
+			<h4>Screendoor Comparison - Cumulative Variation</h4>
+			<p>This time, results are cumulative which means instead of demonstrating the count volume at each x-value, it will demonstrate the count volume for all scores which are at or above that value. Thus, the value for 0 Will incorporate all counts, and thus represent 100% of the sample.</p>
+			<p>Same key as before: <span style="font-weight:bold;color:#1CE430">Green</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:grey">grey</span> is our average score froms Screendoor mapped to the TABE score values. Per request from Saron an addition has been made to also include joint values. The new <span style="font-weight:bold;color:#FF00FF">pink</span> line indicates counts for the number of individuals for which the lowest of their joint scores is equal or greater to that x-value.</p>
+
+			<canvas id="chart2c" class="chart"></canvas>
 
 
 

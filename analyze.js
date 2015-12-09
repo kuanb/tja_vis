@@ -19,7 +19,7 @@ xmlhttp.onreadystatechange = function(){
 			parseLocs(data);
 			
 			canvas2Analysis(data);
-			canvas2Analysis_b(data);
+			canvas2Analysis_bc(data);
 
 			canvas4Analysis();
 			buildCorrAnalysis(90);
@@ -355,7 +355,7 @@ function canvas2Analysis (dd) {
 
 };
 
-function canvas2Analysis_b (dd) {
+function canvas2Analysis_bc (dd) {
 
 	var tm = Number($('#threshMath')[0].value);
 	var tr = Number($('#threshRead')[0].value);
@@ -363,7 +363,7 @@ function canvas2Analysis_b (dd) {
 	var keys = [];
 	var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
 	aa.forEach(function (val) {
-		if (val > 0.5) keys.push(val);
+		if (val > 2) keys.push(val);
 	});
 
 	var replace = [];
@@ -492,6 +492,69 @@ function canvas2Analysis_b (dd) {
 
 	var ctx = document.getElementById("chart2b").getContext("2d");
 	var myLineChart = new Chart(ctx).Line(data, {});
+
+	cR = cR.reverse();
+	cM = cM.reverse();
+	cAS = cAS.reverse();
+	cBo = cBo.reverse();
+
+	for (var i = 1; i < cM.length; i++) {
+		cR[i] += cR[i-1];
+		cM[i] += cM[i-1];
+		cAS[i] += cAS[i-1];
+		cBo[i] += cBo[i-1];
+	}
+	
+	cR = cR.reverse();
+	cM = cM.reverse();
+	cAS = cAS.reverse();
+	cBo = cBo.reverse();
+
+	var data = {
+		labels: keys,
+		datasets: [
+			{
+				fillColor: "rgba(28,228,48,0.2)",
+				strokeColor: "rgba(28,228,48,1)",
+				pointColor: "rgba(28,228,48,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(28,228,48,1)",
+				data: cR
+			},
+			{
+				fillColor: "rgba(0,94,255,0.2)",
+				strokeColor: "rgba(0,94,255,1)",
+				pointColor: "rgba(0,94,255,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(0,94,255,1)",
+				data: cM
+			},
+			{
+				fillColor: "rgba(128,128,128, 0.2)",
+				strokeColor: "rgba(128,128,128, 0.25)",
+				pointColor: "rgba(128,128,128, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(128,128,128, 0.25)",
+				data: cAS
+			},
+			{
+				fillColor: "rgba(255,0,255, 0.2)",
+				strokeColor: "rgba(255,0,255, 0.25)",
+				pointColor: "rgba(255,0,255, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(255,0,255, 0.25)",
+				data: cBo
+			}
+		]
+	};
+
+	var ctx = document.getElementById("chart2c").getContext("2d");
+	var myLineChart = new Chart(ctx).Line(data, {bezierCurve : false});
+
 
 };
 
