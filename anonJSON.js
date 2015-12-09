@@ -27,7 +27,9 @@ fs.readFile('responses.json', 'utf-8', function (err, data) {
 				home_computer: d.home_computer,
 				home_internet: d.home_internet,
 				submitted: d.submitted,
-				tabe: d.tabe
+				tabe: d.tabe,
+				mta: d.mta,
+				interview: d.interview
 			}
 		});
 		data = JSON.stringify(data);
