@@ -40,7 +40,13 @@
 	</head>
 
 	<body>
+
 		<div id="map"></div>
+
+		<button class="btn btn-info pull-right" style="border-radius: 0px" onclick="gowordlcouds()">
+			<div class="glyphicon glyphicon-cloud"></div>
+			New! Word Clouds
+		</button>
 
 		<div class="container">
 			<h2>Explore Applicants</h2>
@@ -177,6 +183,10 @@
 		function removeSplash () {
 			$('#splashBlock')[0].remove();
 		};
+
+		function gowordlcouds () {
+			window.location.href = "wordclouds.html"
+		}
 	</script>
 
 </html>
