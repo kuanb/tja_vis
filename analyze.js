@@ -197,6 +197,11 @@ function buildData (arg) {
 	};
 }
 
+function roundToHalf(number) {
+  var value = (number * 2).toFixed() / 2;
+  return value;
+}
+
 function buildChart (arg) {
 	if (typeof chart == 'object') {
 		chart.destroy();
@@ -228,12 +233,20 @@ function canvas2Analysis (dd) {
 
 	var replace = [];
 	dd.forEach(function (d, i) {
-		if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
+		var has_tabes = d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read');
+		var has_mta = d.hasOwnProperty('mta') && d.mta.hasOwnProperty('score') && d.mta.hasOwnProperty('retest');
+		if (has_tabes && has_mta) {
 			var m = Number(d.tabe.math);
 			var r = Number(d.tabe.read);
+
+			if (d.mta.score == "") d.mta.score = 0;
+			if (d.mta.retest == "") d.mta.retest = 0;
+			
 			if (!isNaN(m) && !isNaN(r)) {
 				replace.push(d);
 			}
+		} else {
+			console.log("Missing tabe or MTA components...", d)
 		}
 	});
 	dd = replace;
@@ -283,6 +296,7 @@ function canvas2Analysis (dd) {
 		cR.push(countsR[k] || 0);
 	});
 
+
 	var countsBo = {};
 	var cBo = [];
 	if (dm.length == dr.length) {		
@@ -307,6 +321,31 @@ function canvas2Analysis (dd) {
 		console.log("ERROR: Tabe Math and Reading results are not of same length... So there is bad data in user Tabe scores.")
 	}
 
+
+	var mta = dd.map(function (d, i) {
+		var first = Number(roundHalf(Number(
+			String(d.mta.score).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+		var retest = Number(roundHalf(Number(
+			String(d.mta.retest).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+
+		var highest = Math.max(first, retest);
+		if (highest > 0) {
+			highest = Math.min((highest/100*14.5), 14.5);
+			highest = roundToHalf(highest);
+		}
+		return highest;
+	});
+
+	var countsMTA = {};
+	var cMTA = [];
+	mta.forEach(function (x) { countsMTA[x] = (countsMTA[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cMTA.push(countsMTA[k] || 0);
+	});
+
+	keys = keys.map(function(k) { return k.toString() + " (~" + Math.min(k*(100/14.5), 100).toFixed(0) + "%)"; });
 
 	var data = {
 		labels: keys,
@@ -346,6 +385,15 @@ function canvas2Analysis (dd) {
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(255,0,255, 0.25)",
 				data: cBo
+			},
+			{
+				fillColor: "rgba(200,119,3, 0.2)",
+				strokeColor: "rgba(200,119,3, 0.25)",
+				pointColor: "rgba(200,119,3, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(200,119,3, 0.25)",
+				data: cMTA
 			}
 		]
 	};
@@ -368,12 +416,20 @@ function canvas2Analysis_bc (dd) {
 
 	var replace = [];
 	dd.forEach(function (d, i) {
-		if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
+		var has_tabes = d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read');
+		var has_mta = d.hasOwnProperty('mta') && d.mta.hasOwnProperty('score') && d.mta.hasOwnProperty('retest');
+		if (has_tabes && has_mta) {
 			var m = Number(d.tabe.math);
 			var r = Number(d.tabe.read);
+
+			if (d.mta.score == "") d.mta.score = 0;
+			if (d.mta.retest == "") d.mta.retest = 0;
+			
 			if (!isNaN(m) && !isNaN(r)) {
 				replace.push(d);
 			}
+		} else {
+			console.log("Missing tabe or MTA components...", d)
 		}
 	});
 	dd = replace;
@@ -448,6 +504,31 @@ function canvas2Analysis_bc (dd) {
 	}
 
 
+	var mta = dd.map(function (d, i) {
+		var first = Number(roundHalf(Number(
+			String(d.mta.score).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+		var retest = Number(roundHalf(Number(
+			String(d.mta.retest).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+
+		var highest = Math.max(first, retest);
+		if (highest > 0) {
+			highest = Math.min((highest/100*14.5), 14.5);
+			highest = roundToHalf(highest);
+		}
+		return highest;
+	});
+
+	var countsMTA = {};
+	var cMTA = [];
+	mta.forEach(function (x) { countsMTA[x] = (countsMTA[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cMTA.push(countsMTA[k] || 0);
+	});
+
+	keys = keys.map(function(k) { return k.toString() + " (~" + Math.min(k*(100/14.5), 100).toFixed(0) + "%)"; });
+
 	var data = {
 		labels: keys,
 		datasets: [
@@ -486,6 +567,15 @@ function canvas2Analysis_bc (dd) {
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(255,0,255, 0.25)",
 				data: cBo
+			},
+			{
+				fillColor: "rgba(200,119,3, 0.2)",
+				strokeColor: "rgba(200,119,3, 0.25)",
+				pointColor: "rgba(200,119,3, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(200,119,3, 0.25)",
+				data: cMTA
 			}
 		]
 	};
@@ -497,18 +587,21 @@ function canvas2Analysis_bc (dd) {
 	cM = cM.reverse();
 	cAS = cAS.reverse();
 	cBo = cBo.reverse();
+	cMTA = cMTA.reverse();
 
 	for (var i = 1; i < cM.length; i++) {
 		cR[i] += cR[i-1];
 		cM[i] += cM[i-1];
 		cAS[i] += cAS[i-1];
 		cBo[i] += cBo[i-1];
+		cMTA[i] += cMTA[i-1];
 	}
 	
 	cR = cR.reverse();
 	cM = cM.reverse();
 	cAS = cAS.reverse();
 	cBo = cBo.reverse();
+	cMTA = cMTA.reverse();
 
 	var data = {
 		labels: keys,
@@ -548,6 +641,15 @@ function canvas2Analysis_bc (dd) {
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(255,0,255, 0.25)",
 				data: cBo
+			},
+			{
+				fillColor: "rgba(200,119,3, 0.2)",
+				strokeColor: "rgba(200,119,3, 0.25)",
+				pointColor: "rgba(200,119,3, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(200,119,3, 0.25)",
+				data: cMTA
 			}
 		]
 	};
