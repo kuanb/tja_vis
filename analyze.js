@@ -113,6 +113,7 @@ function buildData (arg) {
 			}
 		} else if (arg == 'pipeline') {
 			res = d.pipeline.split(',')[0].split('(')[0].replaceAll('"', '');
+			if (res.indexOf("Other") > -1) res = "Other";
 		} else {
 			res = d[arg];
 			if (res == '') {
@@ -239,6 +240,7 @@ function canvas2Analysis (dd) {
 		as = Math.min((as/100*14.5), 14.5);
 		return Number(roundHalf(as));
 	});
+
 	var countsAS = {};
 	var cAS = [];
 	as.forEach(function (x) { countsAS[x] = (countsAS[x] || 0) + 1; });
@@ -251,6 +253,7 @@ function canvas2Analysis (dd) {
 			String(d.tabe.math).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
 		)));
 	});
+
 	var countsM = {}; 
 	var cM = [];
 	dm.forEach(function (x) { countsM[x] = (countsM[x] || 0) + 1; });
@@ -263,34 +266,28 @@ function canvas2Analysis (dd) {
 			String(d.tabe.read).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
 		)));
 	});
-	var countsR = {};
-	var cR = [];
-	dr.forEach(function (x) { countsR[x] = (countsR[x] || 0) + 1; });
-	keys.forEach(function (k, ki) { 
-		cR.push(countsR[k] || 0);
-	});
 
 
 	var data = {
 		labels: keys,
 		datasets: [
 			{
-				fillColor: "rgba(220,220,220,0.2)",
-				strokeColor: "rgba(220,220,220,1)",
-				pointColor: "rgba(220,220,220,1)",
+				fillColor: "rgba(28,228,48,0.2)",
+				strokeColor: "rgba(28,228,48,1)",
+				pointColor: "rgba(28,228,48,1)",
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: cM
+				pointHighlightStroke: "rgba(28,228,48,1)",
+				data: cR
 			},
 			{
-				fillColor: "rgba(151,187,205,0.2)",
-				strokeColor: "rgba(151,187,205,1)",
-				pointColor: "rgba(151,187,205,1)",
+				fillColor: "rgba(0,94,255,0.2)",
+				strokeColor: "rgba(0,94,255,1)",
+				pointColor: "rgba(0,94,255,1)",
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(151,187,205,1)",
-				data: cR
+				pointHighlightStroke: "rgba(0,94,255,1)",
+				data: cM
 			},
 			{
 				fillColor: "rgba(255, 0, 0, 0.2)",
@@ -306,7 +303,7 @@ function canvas2Analysis (dd) {
 
 	var ctx = document.getElementById("chart2").getContext("2d");
 	var myLineChart = new Chart(ctx).Line(data, {});
-}
+};
 
 function getDatesRangeArray (startDate, endDate, interval, total) {
   var config = {
