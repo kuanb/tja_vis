@@ -490,7 +490,7 @@ function canvas4Analysis () {
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: ct
+				data: ctx
 		}]
 	};
 

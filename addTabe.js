@@ -22,12 +22,11 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 			} else {
 
 				ppl = JSON.parse(ppl);
-				data = data.split('\r');
+				data = data.split('\r\n');
 				var cols = data.shift().split(',');
 
 				data.forEach(function (row, i) {
 					row = row.split(',');
-					console.log(row[3], row);
 
 					var first = row[0] || '';
 					var last = row[1] || '';
@@ -36,6 +35,11 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 						math: row[3] || '',
 						date: row[4] || ''
 					};
+					var mta = {
+						score: row[5] || '',
+						retest: row[6] || ''
+					};
+					var interview = row[7] || '';
 
 
 					if (first !== '' && last !== '') {
@@ -48,8 +52,10 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 							var n = p.name.toLowerCase();
 
 							// janky - we assume that no two users have the same name (is this valid?)
-							if (n.indexOf(first) > -1 && n.indexOf(last) > -1 ) { //&& ppl[i].hasOwnProperty('tabe') == false
+							if (n.indexOf(first) > -1 && n.indexOf(last) > -1 ) {  //&& ppl[i].hasOwnProperty('tabe') == false
 								ppl[i]['tabe'] = tabe;
+								ppl[i]['mta'] = mta;
+								ppl[i]['interview'] = interview;
 								hit = true;
 								placed += 1;
 							}
@@ -71,12 +77,12 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 					}
 				});
 
-				console.log('Done. Number placed: ' + placed + ' out of ' + data.length + '. Writing to results disk.');
-
 				ppl = JSON.stringify(ppl);
 				fs.writeFile('responses.json', ppl, function (err) {
 					if (err) {
 						throw err;
+					} else {
+						console.log('Done. Number placed: ' + placed + ' out of ' + data.length + '. Writing to results disk.');
 					}
 				});
 
@@ -87,3 +93,7 @@ fs.readFile('tabe_res.csv', 'utf-8', function (err, data) {
 
 	}
 });
+
+
+
+

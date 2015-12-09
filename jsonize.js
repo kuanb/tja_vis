@@ -72,7 +72,7 @@ fs.readFile('responses.csv', 'utf-8', function (err, data) {
             prsn[cols[i]] = arr[i];
           }
 				}
-        if (fullAdd !== null && rowInd > 100) {
+        if (fullAdd !== null) {
 
           getAddress(fullAdd, function (locData) {
             prsn['loc'] = locData;
