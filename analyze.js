@@ -18,8 +18,8 @@ xmlhttp.onreadystatechange = function(){
 		setTimeout(function () {
 			parseLocs(data);
 			
-			canvas2Analysis(data);
-			canvas2Analysis_bc(data);
+			canvas2Analysis(data, false);
+			canvas2Analysis_bc(data, false);
 
 			canvas4Analysis();
 			buildCorrAnalysis(90);
@@ -220,7 +220,7 @@ function randCol() {
 		return color;
 }
 
-function canvas2Analysis (dd) {
+function canvas2Analysis (dd, mtaonly) {
 
 	var tm = Number($('#threshMath')[0].value);
 	var tr = Number($('#threshRead')[0].value);
@@ -238,12 +238,15 @@ function canvas2Analysis (dd) {
 		if (has_tabes && has_mta) {
 			var m = Number(d.tabe.math);
 			var r = Number(d.tabe.read);
-
-			if (d.mta.score == "") d.mta.score = 0;
-			if (d.mta.retest == "") d.mta.retest = 0;
 			
 			if (!isNaN(m) && !isNaN(r)) {
-				replace.push(d);
+				if (mtaonly) {
+					if (d.mta.score !== "" && d.mta.score !== 0) replace.push(d);
+				} else {
+					if (d.mta.score == "") d.mta.score = 0;
+					if (d.mta.retest == "") d.mta.retest = 0;
+					replace.push(d);
+				}
 			}
 		} else {
 			console.log("Missing tabe or MTA components...", d)
@@ -403,7 +406,7 @@ function canvas2Analysis (dd) {
 
 };
 
-function canvas2Analysis_bc (dd) {
+function canvas2Analysis_bc (dd, mtaonly) {
 
 	var tm = Number($('#threshMath')[0].value);
 	var tr = Number($('#threshRead')[0].value);
@@ -411,7 +414,8 @@ function canvas2Analysis_bc (dd) {
 	var keys = [];
 	var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
 	aa.forEach(function (val) {
-		if (val > 2) keys.push(val);
+		if (val > 2 && !mtaonly) keys.push(val);
+		if (val > 4 && mtaonly) keys.push(val);
 	});
 
 	var replace = [];
@@ -421,12 +425,15 @@ function canvas2Analysis_bc (dd) {
 		if (has_tabes && has_mta) {
 			var m = Number(d.tabe.math);
 			var r = Number(d.tabe.read);
-
-			if (d.mta.score == "") d.mta.score = 0;
-			if (d.mta.retest == "") d.mta.retest = 0;
 			
 			if (!isNaN(m) && !isNaN(r)) {
-				replace.push(d);
+				if (mtaonly) {
+					if (d.mta.score !== "" && d.mta.score !== 0) replace.push(d);
+				} else {
+					if (d.mta.score == "") d.mta.score = 0;
+					if (d.mta.retest == "") d.mta.retest = 0;
+					replace.push(d);
+				}
 			}
 		} else {
 			console.log("Missing tabe or MTA components...", d)
@@ -854,5 +861,22 @@ function canvas4Analysis () {
 	chart4 = new Chart(ctx).Line(line, {});
 };
 
+function rerunChart2Graphs () {
+	var mtaonly = false;
+	var btns = $(".rerunWithMTAOnly");
+	btns.each(function (e) {
+		ea = btns[e];
+		if (ea.innerText == "Rerun With Only MTA Test Takers") {
+			$(".rerunWithMTAOnly")[e].innerText = "Rerun With All Individuals"
+			mtaonly = true;
+		} else {
+			$(".rerunWithMTAOnly")[e].innerText = "Rerun With Only MTA Test Takers"
+			mtaonly = false;
+		}
+	});
+	console.log("Running with mtaonly: " + mtaonly);
+	canvas2Analysis(data, mtaonly);
+	canvas2Analysis_bc(data, mtaonly);
+};
 
 

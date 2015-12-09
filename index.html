@@ -80,11 +80,11 @@
 				Filter by Tabe 
 			</div>
 
-			<div class="btn pull-right">
-				Threshold Math: 
+			<div class="btn pull-right" id="threshold_setter" onclick="updateThreshValsElsewhere()">
+				<b>Threshold Math: </b>
 				<input type="number" id="threshMath"
 					min="0" max="15" step="0.5" value="11">
-				Reading: 
+				<b>Reading: </b>
 				<input type="number" id="threshRead" 
 					min="0" max="15" step="0.5" value="10">
 			</div>
@@ -96,6 +96,7 @@
 
 
 
+			<button class="pull-right rerunWithMTAOnly" onclick="rerunChart2Graphs()">Rerun With Only MTA Test Takers</button>
 			<h4>Screendoor Comparison</h4>
 			<p>Analyzing scoring on Screendoor against scores on TABE tests. <span style="font-weight:bold;color:#1CE430">Green</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:grey">grey</span> is our average score froms Screendoor mapped to the TABE score values. The <span style="font-weight:bold;color:orange">orange</span> line indicates MTA score. For these graphs, the highest score is selected between the test and retest score.</p>
 			<p>Per request from Saron an addition has been made to also include joint values. The new <span style="font-weight:bold;color:#FF00FF">pink</span> line indicates counts for the number of individuals for which the lowest of their joint scores is equal to that x-value.</p>
@@ -104,6 +105,7 @@
 
 
 
+			<button class="pull-right rerunWithMTAOnly" onclick="rerunChart2Graphs()">Rerun With Only MTA Test Takers</button>
 			<h4>Screendoor Comparison - Different Scale</h4>
 			<p><i>Same chart as above, but we are ignoring the values that scored less than 2 and shrinking the y scale so we can see in better detail the other results.</i></p>
 			<p>Analyzing scoring on Screendoor against scores on TABE tests. <span style="font-weight:bold;color:#1CE430">Green</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:grey">grey</span> is our average score froms Screendoor mapped to the TABE score values. The <span style="font-weight:bold;color:orange">orange</span> line indicates MTA score. For these graphs, the highest score is selected between the test and retest score.</p>
@@ -112,7 +114,7 @@
 			<canvas id="chart2b" class="chart"></canvas>
 
 
-
+			<button class="pull-right rerunWithMTAOnly" onclick="rerunChart2Graphs()">Rerun With Only MTA Test Takers</button>
 			<h4>Screendoor Comparison - Cumulative Variation</h4>
 			<p>This time, results are cumulative which means instead of demonstrating the count volume at each x-value, it will demonstrate the count volume for all scores which are at or above that value. Thus, the value for 0 Will incorporate all counts, and thus represent 100% of the sample.</p>
 			<p>Same key as before: <span style="font-weight:bold;color:#1CE430">Green</span> is reading, <span style="font-weight:bold;color:blue">blue</span> is math, and <span style="font-weight:bold;color:grey">grey</span> is our average score froms Screendoor mapped to the TABE score values. Per request from Saron an addition has been made to also include joint values. The new <span style="font-weight:bold;color:#FF00FF">pink</span> line indicates counts for the number of individuals for which the lowest of their joint scores is equal or greater to that x-value. The <span style="font-weight:bold;color:orange">orange</span> line indicates MTA score. For these graphs, the highest score is selected between the test and retest score.</p>
@@ -133,6 +135,14 @@
 					<input type="number" id="threshScreendoor"
 						min="0" max="100" step="10" value="90">
 					<button onclick="buildCorrAnalysis()">Rerun</button>
+
+					<br><i>
+					<span style="margin-left: 20px;">
+						Running with the following TABE thresholds:
+						<br><span style="margin-left: 20px;">Math: <span id="threshMath_2">11</span></span>
+						<br><span style="margin-left: 20px;">Reading: <span id="threshRead_2">10</span></span>
+						<span style="float:right"><button id="scroll_to_threshold_setter" class="btn btn-default btn-sm">Change thresholds</button></span>
+					</span>
 
 					<br><br>
 
@@ -196,7 +206,23 @@
 
 		function gowordlcouds () {
 			window.location.href = "wordclouds.html"
+		};
+
+		function updateThreshValsElsewhere () {
+			var tm = Number($('#threshMath')[0].value);
+			var tr = Number($('#threshRead')[0].value);
+
+			$("#threshMath_2").each(function (e) {
+				$("#threshMath_2")[e].innerHTML = tm;
+				$("#threshRead_2")[e].innerHTML = tr;
+			})
 		}
+
+		$("#scroll_to_threshold_setter").click(function() {
+		  $('html, body').animate({
+		    scrollTop: $("#threshold_setter").offset().top
+		  }, 1000);
+		});
 	</script>
 
 </html>
