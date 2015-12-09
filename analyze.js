@@ -17,7 +17,10 @@ xmlhttp.onreadystatechange = function(){
 		if (map.addLayer == undefined) to = 1000;
 		setTimeout(function () {
 			parseLocs(data);
+			
 			canvas2Analysis(data);
+			canvas2Analysis_b(data);
+
 			canvas4Analysis();
 			buildCorrAnalysis(90);
 		}, to);
@@ -214,6 +217,9 @@ function randCol() {
 
 function canvas2Analysis (dd) {
 
+	var tm = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshRead')[0].value);
+
 	var keys = [];
 	var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
 	aa.forEach(function (val) {
@@ -232,6 +238,7 @@ function canvas2Analysis (dd) {
 	});
 	dd = replace;
 
+
 	var as = dd.map(function (d, i) {
 		var as = Number(d.avg_score.replaceAll('%', ''));
 		if (isNaN(as)) {
@@ -248,6 +255,7 @@ function canvas2Analysis (dd) {
 		cAS.push(countsAS[k] || 0);
 	});
 
+
 	var dm = dd.map(function (d, i) {
 		return Number(roundHalf(Number(
 			String(d.tabe.math).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
@@ -261,11 +269,43 @@ function canvas2Analysis (dd) {
 		cM.push(countsM[k] || 0);
 	});
 
+
 	var dr = dd.map(function (d, i) {
 		return Number(roundHalf(Number(
 			String(d.tabe.read).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
 		)));
 	});
+
+	var countsR = {};
+	var cR = [];
+	dr.forEach(function (x) { countsR[x] = (countsR[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cR.push(countsR[k] || 0);
+	});
+
+	var countsBo = {};
+	var cBo = [];
+	if (dm.length == dr.length) {		
+		var allKeys = [];
+		var foo = new Array(30);
+		for (var i=0; i<foo.length; i++) {
+			var k = (i/2);
+		  countsBo[k] = 0;
+		  allKeys.push(Number(k));
+		}
+
+		for (var i = 0; i < dm.length; i++) {
+			var base = Math.min(dr[i], dm[i]);
+			countsBo[base] += 1;
+		}
+
+		keys.forEach(function (k, ki) { 
+			cBo.push(countsBo[k] || 0);
+		});
+
+	} else {
+		console.log("ERROR: Tabe Math and Reading results are not of same length... So there is bad data in user Tabe scores.")
+	}
 
 
 	var data = {
@@ -290,19 +330,169 @@ function canvas2Analysis (dd) {
 				data: cM
 			},
 			{
-				fillColor: "rgba(255, 0, 0, 0.2)",
-				strokeColor: "rgba(255, 0, 0, 0.25)",
-				pointColor: "rgba(255, 0, 0, 0.25)",
+				fillColor: "rgba(128,128,128, 0.2)",
+				strokeColor: "rgba(128,128,128, 0.25)",
+				pointColor: "rgba(128,128,128, 0.25)",
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(255, 0, 0, 0.25)",
+				pointHighlightStroke: "rgba(128,128,128, 0.25)",
 				data: cAS
+			},
+			{
+				fillColor: "rgba(255,0,255, 0.2)",
+				strokeColor: "rgba(255,0,255, 0.25)",
+				pointColor: "rgba(255,0,255, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(255,0,255, 0.25)",
+				data: cBo
 			}
 		]
 	};
 
-	var ctx = document.getElementById("chart2").getContext("2d");
+	var ctx = document.getElementById("chart2a").getContext("2d");
 	var myLineChart = new Chart(ctx).Line(data, {});
+
+};
+
+function canvas2Analysis_b (dd) {
+
+	var tm = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshRead')[0].value);
+
+	var keys = [];
+	var aa = Array.apply(null, {length: 30}).map(function (n, i) {  return 0.5*i; });
+	aa.forEach(function (val) {
+		if (val > 0.5) keys.push(val);
+	});
+
+	var replace = [];
+	dd.forEach(function (d, i) {
+		if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
+			var m = Number(d.tabe.math);
+			var r = Number(d.tabe.read);
+			if (!isNaN(m) && !isNaN(r)) {
+				replace.push(d);
+			}
+		}
+	});
+	dd = replace;
+
+
+	var as = dd.map(function (d, i) {
+		var as = Number(d.avg_score.replaceAll('%', ''));
+		if (isNaN(as)) {
+			as = 0;
+		}
+		as = Math.min((as/100*14.5), 14.5);
+		return Number(roundHalf(as));
+	});
+
+	var countsAS = {};
+	var cAS = [];
+	as.forEach(function (x) { countsAS[x] = (countsAS[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cAS.push(countsAS[k] || 0);
+	});
+
+
+	var dm = dd.map(function (d, i) {
+		return Number(roundHalf(Number(
+			String(d.tabe.math).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+	});
+
+	var countsM = {}; 
+	var cM = [];
+	dm.forEach(function (x) { countsM[x] = (countsM[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cM.push(countsM[k] || 0);
+	});
+
+
+	var dr = dd.map(function (d, i) {
+		return Number(roundHalf(Number(
+			String(d.tabe.read).replaceAll(' ', '').replaceAll('*', '').replaceAll('+', '')
+		)));
+	});
+
+	var countsR = {};
+	var cR = [];
+	dr.forEach(function (x) { countsR[x] = (countsR[x] || 0) + 1; });
+	keys.forEach(function (k, ki) { 
+		cR.push(countsR[k] || 0);
+	});
+
+	var countsBo = {};
+	var cBo = [];
+	if (dm.length == dr.length) {		
+		var allKeys = [];
+		var foo = new Array(30);
+		for (var i=0; i<foo.length; i++) {
+			var k = (i/2);
+		  countsBo[k] = 0;
+		  allKeys.push(Number(k));
+		}
+
+		for (var i = 0; i < dm.length; i++) {
+			var base = Math.min(dr[i], dm[i]);
+			countsBo[base] += 1;
+		}
+
+		keys.forEach(function (k, ki) { 
+			cBo.push(countsBo[k] || 0);
+		});
+
+	} else {
+		console.log("ERROR: Tabe Math and Reading results are not of same length... So there is bad data in user Tabe scores.")
+	}
+
+
+	var data = {
+		labels: keys,
+		datasets: [
+			{
+				fillColor: "rgba(28,228,48,0.2)",
+				strokeColor: "rgba(28,228,48,1)",
+				pointColor: "rgba(28,228,48,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(28,228,48,1)",
+				data: cR
+			},
+			{
+				fillColor: "rgba(0,94,255,0.2)",
+				strokeColor: "rgba(0,94,255,1)",
+				pointColor: "rgba(0,94,255,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(0,94,255,1)",
+				data: cM
+			},
+			{
+				fillColor: "rgba(128,128,128, 0.2)",
+				strokeColor: "rgba(128,128,128, 0.25)",
+				pointColor: "rgba(128,128,128, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(128,128,128, 0.25)",
+				data: cAS
+			},
+			{
+				fillColor: "rgba(255,0,255, 0.2)",
+				strokeColor: "rgba(255,0,255, 0.25)",
+				pointColor: "rgba(255,0,255, 0.25)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(255,0,255, 0.25)",
+				data: cBo
+			}
+		]
+	};
+
+	var ctx = document.getElementById("chart2b").getContext("2d");
+	var myLineChart = new Chart(ctx).Line(data, {});
+
 };
 
 function getDatesRangeArray (startDate, endDate, interval, total) {
@@ -323,7 +513,7 @@ function getDatesRangeArray (startDate, endDate, interval, total) {
 function buildCorrAnalysis (compareScore) {
 	var d = data;
 	var tm = Number($('#threshMath')[0].value);
-	var tr = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshRead')[0].value);
 
 	if (compareScore == undefined)
 		compareScore = Number($('#threshScreendoor')[0].value)
