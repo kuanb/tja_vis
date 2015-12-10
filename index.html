@@ -51,6 +51,13 @@
 				<br><b>New!</b><br>Word Clouds<br><i><small>Click to visit.</small></i>
 			</button>
 
+			<button class="btn btn-info pull-right" 
+					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 140px;" 
+					onclick="gopage2()">
+					<div class="glyphicon glyphicon-eye-open"></div>
+				<br><b>Page 2</b><br>Additional<br>Viz<br>
+			</button>
+
 			<div class="btn pull-right" id="threshold_setter" 
 						onclick="updateThreshValsElsewhere()" 
 						style="background-color:#add8e6; border-radius: 0px;">
@@ -334,6 +341,9 @@
 
 		function gowordlcouds () {
 			window.location.href = "wordclouds.html"
+		};
+		function gopage2 () {
+			window.location.href = "part2.html"
 		};
 
 		function updateAll_buildCorrAnalysis (item) {

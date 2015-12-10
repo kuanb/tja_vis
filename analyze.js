@@ -57,8 +57,10 @@ function parseLocs (data) {
 
 function buildData (arg) {
 	var runFilter = $('#tabeFilter')[0].checked;
+	var runFilterMTA = $('#mtaFilter')[0].checked;
 	var tm = Number($('#threshMath')[0].value);
 	var tr = Number($('#threshRead')[0].value);
+	var tmta = Number($('#threshMTA')[0].value);
 
 	if (runFilter) {
 		if (isNaN(tm) || isNaN(tr)) {
@@ -71,6 +73,18 @@ function buildData (arg) {
 			if (d.hasOwnProperty('tabe') && d.tabe.hasOwnProperty('math') && d.tabe.hasOwnProperty('read')) {
 				var m = Number(d.tabe.math);
 				var r = Number(d.tabe.read);
+				if (!isNaN(m) && !isNaN(r)) {
+					replace.push(d);
+				}
+			}
+		});
+		data = replace;
+	} else if (runFilterMTA) {
+		var replace = [];
+		data.forEach(function (d, i) {
+			if (d.hasOwnProperty('mta') && d.mta.hasOwnProperty('score') && d.mta.hasOwnProperty('retest')) {
+				var m = Number(d.mta.score);
+				var r = Number(d.mta.retest);
 				if (!isNaN(m) && !isNaN(r)) {
 					replace.push(d);
 				}
@@ -128,6 +142,14 @@ function buildData (arg) {
 			var m = Number(d.tabe.math);
 			var r = Number(d.tabe.read);
 			if (m >= tm && r >= tr) {
+				res += ' (Passed)';
+			} else {
+				res += ' (Failed)';
+			}
+		} else if (runFilterMTA) {
+			var m = Number(d.mta.score);
+			var r = Number(d.mta.retest);
+			if (Math.max(m, r) >= tmta) {
 				res += ' (Passed)';
 			} else {
 				res += ' (Failed)';
@@ -401,8 +423,11 @@ function canvas2Analysis (dd, mtaonly) {
 		]
 	};
 
+	if (chart2a !== undefined && typeof chart2a == 'object') {
+		try { chart2a.destroy(); } catch (e) {  }
+	}
 	var ctx = document.getElementById("chart2a").getContext("2d");
-	var myLineChart = new Chart(ctx).Line(data, {});
+	chart2a = new Chart(ctx).Line(data, {});
 
 };
 
@@ -586,9 +611,11 @@ function canvas2Analysis_bc (dd, mtaonly) {
 			}
 		]
 	};
-
+	if (chart2b !== undefined && typeof chart2b == 'object') {
+		try { chart2b.destroy(); } catch (e) {  }
+	}
 	var ctx = document.getElementById("chart2b").getContext("2d");
-	var myLineChart = new Chart(ctx).Line(data, {});
+	chart2b = new Chart(ctx).Line(data, {});
 
 	cR = cR.reverse();
 	cM = cM.reverse();
@@ -660,9 +687,11 @@ function canvas2Analysis_bc (dd, mtaonly) {
 			}
 		]
 	};
-
+	if (chart2c !== undefined && typeof chart2c == 'object') {
+		try { chart2c.destroy(); } catch (e) {  }
+	}
 	var ctx = document.getElementById("chart2c").getContext("2d");
-	var myLineChart = new Chart(ctx).Line(data, {bezierCurve : false});
+	chart2c = new Chart(ctx).Line(data, {bezierCurve : false});
 
 
 };
@@ -774,7 +803,7 @@ function buildCorrAnalysis (compareScore) {
 
 
 	if (chart3 !== undefined && typeof chart3 == 'object') {
-		chart3.destroy();
+		try { chart3.destroy(); } catch (e) {  }
 	}
 
 	var ctx = document.getElementById("chart3").getContext("2d");
@@ -1041,12 +1070,12 @@ function buildCorrAnalysis (compareScore) {
 	};
 
 
-	if (chart3 !== undefined && typeof chart3 == 'object') {
-		chart3.destroy();
+	if (chart3d !== undefined && typeof chart3d == 'object') {
+		try { chart3d.destroy(); } catch (e) {  }
 	}
 
 	var ctx = document.getElementById("chart3d").getContext("2d");
-	chart3 = new Chart(ctx).Bar(compareBars, {});
+	chart3d = new Chart(ctx).Bar(compareBars, {});
 
 
 
@@ -1172,12 +1201,12 @@ function buildCorrAnalysis (compareScore) {
 	};
 
 
-	if (chart3 !== undefined && typeof chart3 == 'object') {
-		chart3.destroy();
+	if (chart3e !== undefined && typeof chart3e == 'object') {
+		try { chart3e.destroy(); } catch (e) {  }
 	}
 
 	var ctx = document.getElementById("chart3e").getContext("2d");
-	chart3 = new Chart(ctx).Bar(compareBars, {});
+	chart3e = new Chart(ctx).Bar(compareBars, {});
 
 };
 

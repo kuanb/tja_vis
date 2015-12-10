@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+		<script src="http://momentjs.com/downloads/moment.min.js"></script>
+
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		
+		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster-src.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+
+
+
+
+<!-- WHEN NO INTERNET
+		<script src="lib/jquery-1.9.1.min.js"></script>
+
+		<script src="lib/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css">
+		
+		<link rel="stylesheet" href="lib/leaflet.css" />
+		<script src="lib/leaflet.js"></script>
+
+		<script src="lib/markerclusterer_compiled.js"></script>
+
+		<script src="lib/Chart.min.js"></script>
+ -->
+
+		<link rel="stylesheet" href="style.css" />
+		<script src="analyze2.js"></script>
+	</head>
+
+	<body>
+
+		<button class="btn btn-info pull-right" style="border-radius: 0px" onclick="gohome()">
+			<div class="glyphicon glyphicon-arrow-left"></div>
+			Return to Main Analysis
+		</button>
+
+		<div class="container">
+			<h1>
+				Answering some specific submitted questions...
+			</h1>
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					Gender breakdown by status in process
+				</div>
+				<div class="panel-body">
+					<h5>Click a badge to run results for a different status to see the gender breakdown.</h5>
+					<p id="status_types"></p>
+					<canvas id="chart_q1" class="chart"></canvas>
+					<p id="status_types_currently_showing"></p>
+				</div>
+			</div>
+
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					Seeing who mentioned various organizations in their results
+				</div>
+				<div class="panel-body">
+					<h5>Here we are demonstrating the number of mentions of from programs such as NPower.</h5>
+					<p>The list was supplied by Saron and can be updated in the code. The current list includes: NPower, Harlem Children's Zone. You can sort by different status types (below), or you can <span class="label label-info" onclick="q2_draw()">run for all by clicking here.<span></p>
+					<p id="status_types_mentions"></p>
+					<canvas id="chart_q2" class="chart"></canvas>
+					<p id="mentions_gender_currently_showing"></p>
+				</div>
+			</div>
+
+		</div>
+
+
+	</body>
+
+	<script>
+		function gohome () {
+			window.location.href = "index.html"
+		}
+	</script>
+
+</html>
