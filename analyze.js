@@ -865,57 +865,6 @@ function buildCorrAnalysis (compareScore) {
 
 
 	// Now for the join version Chart 3c
-	
-	var fails_tabe = [DUmathAgg.fail, DUreadAgg.fail, DEmathAgg.fail, DEreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
-	var passes_tabe = [DUmathAgg.pass, DUreadAgg.pass, DEmathAgg.pass, DEreadAgg.pass, DOmathAgg.pass, DOreadAgg.pass];
-
-	var fails_mta = [DUmta_sc.fail, DUmta_rt.fail, DEmta_sc.fail, DEmta_rt.fail, DOmta_sc.fail, DOmta_rt.fail];
-	var passes_mta = [DUmta_sc.pass, DUmta_rt.pass, DEmta_sc.pass, DEmta_rt.pass, DOmta_sc.pass, DOmta_rt.pass];
-
-	var compareBars = {
-	  labels: ["UNDER (First)", "UNDER (Retest)", "EQUAL (First)", "EQUAL (Retest)", "OVER (First)", "OVER (Retest)"],
-	  datasets: [
-	      {
-          fillColor: "rgba(255, 0, 0, 0.15)",
-          strokeColor: "rgba(255, 0, 0, 0.25)",
-          highlightFill: "rgba(255, 0, 0, 0.75)",
-          highlightStroke: "rgba(255, 0, 0, 1)",
-          data: fails_tabe
-	      },
-	      {
-          fillColor: "rgba(151,187,205,0.5)",
-          strokeColor: "rgba(151,187,205,0.8)",
-          highlightFill: "rgba(151,187,205,0.75)",
-          highlightStroke: "rgba(151,187,205,1)",
-          data: passes_tabe
-	      },
-	      {
-          fillColor: "rgba(216, 128, 26, 0.15)",
-          strokeColor: "rgba(216, 128, 26, 0.25)",
-          highlightFill: "rgba(216, 128, 26, 0.75)",
-          highlightStroke: "rgba(216, 128, 26, 1)",
-          data: fails_mta
-	      },
-	      {
-          fillColor: "rgba(6,192,162,0.5)",
-          strokeColor: "rgba(6,192,162,0.8)",
-          highlightFill: "rgba(6,192,162,0.75)",
-          highlightStroke: "rgba(6,192,162,1)",
-          data: passes_mta
-	      }
-	  ]
-	};
-
-
-	if (chart3 !== undefined && typeof chart3 == 'object') {
-		chart3.destroy();
-	}
-
-	var ctx = document.getElementById("chart3c").getContext("2d");
-	chart3 = new Chart(ctx).Bar(compareBars, {});
-
-
-	// Now for the join version with PERCENTAGES Chart 3d
 
 	var DU_tabe = {pass: 0, fail: 0};
 	dUnder.forEach(function (ea) {
@@ -940,12 +889,12 @@ function buildCorrAnalysis (compareScore) {
 		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		
-		if (m >= tm && r >= tr) DE_tabe.pass += 1;
-		else DE_tabe.fail += 1;
+		if (m >= tm && r >= tr) DO_tabe.pass += 1;
+		else DO_tabe.fail += 1;
 	});
 
-	fails_tabe = [DU_tabe.fail, DE_tabe.fail, DO_tabe.fail];
-	passes_tabe = [DU_tabe.pass, DE_tabe.pass, DO_tabe.pass];
+	fails_tabe = [DU_tabe.fail, DE_tabe.fail, DO_tabe.fail, DE_tabe.fail + DO_tabe.fail];
+	passes_tabe = [DU_tabe.pass, DE_tabe.pass, DO_tabe.pass, DE_tabe.pass + DO_tabe.pass];
 
 
 	tabe_sum = 0;
@@ -993,6 +942,54 @@ function buildCorrAnalysis (compareScore) {
 		else if (m !== 0) DO_mta.fail += 1;
 	});
 
+	fails_mta = [DU_mta.fail, DE_mta.fail, DO_mta.fail, DE_mta.fail + DO_mta.fail];
+	passes_mta = [DU_mta.pass, DE_mta.pass, DO_mta.pass, DE_mta.pass + DO_mta.pass];
+
+	var compareBars = {
+	  labels: ["UNDER", "EQUAL", "OVER", "EQUAL/OVER"],
+	  datasets: [
+	      {
+          fillColor: "rgba(255, 0, 0, 0.15)",
+          strokeColor: "rgba(255, 0, 0, 0.25)",
+          highlightFill: "rgba(255, 0, 0, 0.75)",
+          highlightStroke: "rgba(255, 0, 0, 1)",
+          data: fails_tabe
+	      },
+	      {
+          fillColor: "rgba(151,187,205,0.5)",
+          strokeColor: "rgba(151,187,205,0.8)",
+          highlightFill: "rgba(151,187,205,0.75)",
+          highlightStroke: "rgba(151,187,205,1)",
+          data: passes_tabe
+	      },
+	      {
+          fillColor: "rgba(216, 128, 26, 0.15)",
+          strokeColor: "rgba(216, 128, 26, 0.25)",
+          highlightFill: "rgba(216, 128, 26, 0.75)",
+          highlightStroke: "rgba(216, 128, 26, 1)",
+          data: fails_mta
+	      },
+	      {
+          fillColor: "rgba(6,192,162,0.5)",
+          strokeColor: "rgba(6,192,162,0.8)",
+          highlightFill: "rgba(6,192,162,0.75)",
+          highlightStroke: "rgba(6,192,162,1)",
+          data: passes_mta
+	      }
+	  ]
+	};
+
+
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
+	}
+
+	var ctx = document.getElementById("chart3c").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
+
+
+	// Now for the join version with PERCENTAGES Chart 3d
+
 	mta_sum = 0;
 	fails_mta.forEach(function (ea) {
 		mta_sum += ea;
@@ -1010,7 +1007,7 @@ function buildCorrAnalysis (compareScore) {
 	});
 
 	var compareBars = {
-	  labels: ["UNDER", "EQUAL", "OVER"],
+	  labels: ["UNDER", "EQUAL", "OVER", "EQUAL/OVER"],
 	  datasets: [
 	      {
           fillColor: "rgba(255, 0, 0, 0.15)",
@@ -1050,6 +1047,138 @@ function buildCorrAnalysis (compareScore) {
 
 	var ctx = document.getElementById("chart3d").getContext("2d");
 	chart3 = new Chart(ctx).Bar(compareBars, {});
+
+
+
+
+	// Now for the join version Chart 3E - Comparing men v women
+
+	var DU_tabe = {"male": {pass: 0, fail: 0}, "female": {pass: 0, fail: 0}};
+	dUnder.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		if (m >= tm && r >= tr) DU_tabe[ea.sex.toLowerCase()].pass += 1;
+		else if (DU_tabe[ea.sex.toLowerCase()]) DU_tabe[ea.sex.toLowerCase()].fail += 1;
+	});
+	
+	var DO_tabe = {"male": {pass: 0, fail: 0}, "female": {pass: 0, fail: 0}};
+	dEqual.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm && r >= tr) DO_tabe[ea.sex.toLowerCase()].pass += 1;
+		else if (DO_tabe[ea.sex.toLowerCase()]) DO_tabe[ea.sex.toLowerCase()].fail += 1;
+	});
+	dOver.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm && r >= tr) DO_tabe[ea.sex.toLowerCase()].pass += 1;
+		else if (DO_tabe[ea.sex.toLowerCase()]) DO_tabe[ea.sex.toLowerCase()].fail += 1;
+	});
+
+	fails_tabe = [DU_tabe.male.fail, DO_tabe.male.fail, DU_tabe.female.fail, DO_tabe.female.fail];
+	passes_tabe = [DU_tabe.male.pass, DO_tabe.male.pass, DU_tabe.female.pass, DO_tabe.female.pass];
+
+
+	tabe_sum = 0;
+	fails_tabe.forEach(function (ea) {
+		tabe_sum += ea;
+	});
+	passes_tabe.forEach(function (ea) {
+		tabe_sum += ea;
+	});
+	fails_tabe = fails_tabe.map(function (ea) {
+		ea = Number((100*ea/tabe_sum).toFixed(1));
+		return ea;
+	});
+	passes_tabe = passes_tabe.map(function (ea) {
+		ea = Number((100*ea/tabe_sum).toFixed(1));
+		return ea;
+	});
+
+
+
+	var DU_mta = {"male": {pass: 0, fail: 0}, "female": {pass: 0, fail: 0}};
+	dUnder.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta || r >= tmta) DU_mta[ea.sex.toLowerCase()].pass += 1;
+		else if (m !== 0 && DU_mta[ea.sex.toLowerCase()]) DU_mta[ea.sex.toLowerCase()].fail += 1;
+	});
+	
+	var DO_mta = {"male": {pass: 0, fail: 0}, "female": {pass: 0, fail: 0}};
+	dOver.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta || r >= tmta) DO_mta[ea.sex.toLowerCase()].pass += 1;
+		else if (m !== 0 && DU_mta[ea.sex.toLowerCase()]) DO_mta[ea.sex.toLowerCase()].fail += 1;
+	});
+
+
+	fails_mta = [DU_mta.male.fail, DO_mta.male.fail, DU_mta.female.fail, DO_mta.female.fail];
+	passes_mta = [DU_mta.male.pass, DO_mta.male.pass, DU_mta.female.pass, DO_mta.female.pass]
+
+	mta_sum = 0;
+	fails_mta.forEach(function (ea) {
+		mta_sum += ea;
+	});
+	passes_mta.forEach(function (ea) {
+		mta_sum += ea;
+	});
+	fails_mta = fails_mta.map(function (ea) {
+		ea = Number((100*ea/mta_sum).toFixed(1));
+		return ea;
+	});
+	passes_mta = passes_mta.map(function (ea) {
+		ea = Number((100*ea/mta_sum).toFixed(1));
+		return ea;
+	});
+
+	var compareBars = {
+	  labels: ["UNDER(MEN)", "EQUAL/OVER(MEN)", "UNDER(WOMEN)", "EQUAL/OVER(WOMEN)"],
+	  datasets: [
+	      {
+          fillColor: "rgba(255, 0, 0, 0.15)",
+          strokeColor: "rgba(255, 0, 0, 0.25)",
+          highlightFill: "rgba(255, 0, 0, 0.75)",
+          highlightStroke: "rgba(255, 0, 0, 1)",
+          data: fails_tabe
+	      },
+	      {
+          fillColor: "rgba(151,187,205,0.5)",
+          strokeColor: "rgba(151,187,205,0.8)",
+          highlightFill: "rgba(151,187,205,0.75)",
+          highlightStroke: "rgba(151,187,205,1)",
+          data: passes_tabe
+	      },
+	      {
+          fillColor: "rgba(216, 128, 26, 0.15)",
+          strokeColor: "rgba(216, 128, 26, 0.25)",
+          highlightFill: "rgba(216, 128, 26, 0.75)",
+          highlightStroke: "rgba(216, 128, 26, 1)",
+          data: fails_mta
+	      },
+	      {
+          fillColor: "rgba(6,192,162,0.5)",
+          strokeColor: "rgba(6,192,162,0.8)",
+          highlightFill: "rgba(6,192,162,0.75)",
+          highlightStroke: "rgba(6,192,162,1)",
+          data: passes_mta
+	      }
+	  ]
+	};
+
+
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
+	}
+
+	var ctx = document.getElementById("chart3e").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
+
 };
 
 
