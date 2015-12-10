@@ -51,8 +51,22 @@
 				<br><b>New!</b><br>Word Clouds<br><i><small>Click to visit.</small></i>
 			</button>
 
-			<h2>Explore Applicants</h2>
+			<div class="btn pull-right" id="threshold_setter" 
+						onclick="updateThreshValsElsewhere()" 
+						style="background-color:#add8e6; border-radius: 0px;">
+				<b>Threshold Math: </b>
+				<input type="number" id="threshMath"
+					min="0" max="15" step="0.5" value="11">
+				<b>Reading: </b>
+				<input type="number" id="threshRead" 
+					min="0" max="15" step="1" value="10">
+				<b>MTA: </b>
+				<input type="number" id="threshMTA" 
+					min="0" max="100" step="0.5" value="70">
+			</div>
 
+			<!-- First Section -->
+			<h2>Explore Applicants</h2>
 			<div class="dropdown pull-right">
 				<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select Variable
 				<span class="caret"></span></button>
@@ -75,25 +89,17 @@
 				</ul>
 			</div>
 
-			<div class="btn pull-right" onclick="toggleCB()">
+			<div class="btn pull-right" onclick="toggleCB_tabe()">
 				<input type="checkbox" id="tabeFilter"/>
 				Filter by Tabe 
 			</div>
-
-			<div class="btn pull-right" id="threshold_setter" onclick="updateThreshValsElsewhere()">
-				<b>Threshold Math: </b>
-				<input type="number" id="threshMath"
-					min="0" max="15" step="0.5" value="11">
-				<b>Reading: </b>
-				<input type="number" id="threshRead" 
-					min="0" max="15" step="1" value="10">
-				<b>MTA: </b>
-				<input type="number" id="threshMTA" 
-					min="0" max="100" step="0.5" value="70">
+			<div class="btn pull-right" onclick="toggleCB_mta()">
+				<input type="checkbox" id="mtaFilter"/>
+				Filter by MTA 
 			</div>
-			
 
 			<p>Use the dropdown to select which variable you want to visualize.</p>
+		
 
 			<canvas id="chart" class="chart"></canvas>
 
@@ -279,10 +285,11 @@
 
 			<div><br>
 				<h4>X-Y Distribution of TABE v. Screendoor</h4>
-				<button onclick="canvas4Analysis()" class="pull-right">
-					Rerun</button>
+				<button onclick="canvas4Analysis()">Rerun Both Genders</button>
+				<button onclick="canvas4Analysis('female')">Rerun Female Only</button>
+				<button onclick="canvas4Analysis('male')">Rerun Male Only</button>
 
-				<p>Screendoor scores along the bottom x-axis and percentage that passed the TABE test along the vertical. Adjust threshold values at the top of page and rerun to calculate against different TABE pass values. <span style="font-weight:bold;color:grey">Grey</span> line indicates the count of the number of results for that score value. <span style="font-weight:bold;color:blue">Blue</span> indicates the percentage passed for that score value.</p>
+				<p>Screendoor scores along the bottom x-axis and percentage that passed the TABE test along the vertical. Adjust threshold values at the top of page and rerun to calculate against different TABE pass values. <span style="font-weight:bold;color:grey">Grey</span> line indicates the count of the number of results for that score value. <span style="font-weight:bold;color:blue">Blue</span> indicates the percentage passed for that score value. <span style="font-weight:bold;color:green">Green</span> indicates passing the MTA. <span style="font-weight:bold;color:red">Red</span> indicates they passed both the TABE and the MTA. It appears that passing the MTA is a pretty good indicator of also passing both (since individuals only went on to the MTA if they passed the TABE, hence the limited difference between the two lines).</p>
 
 				<canvas id="chart4" class="chart"></canvas>
 			</div>
@@ -313,8 +320,12 @@
 		map.scrollWheelZoom.disable();
 		L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
 
-		function toggleCB () {
+		function toggleCB_tabe () {
 			$('#tabeFilter')[0].checked = !$('#tabeFilter')[0].checked;
+		};
+
+		function toggleCB_mta () {
+			$('#mtaFilter')[0].checked = !$('#mtaFilter')[0].checked;
 		};
 
 		function removeSplash () {

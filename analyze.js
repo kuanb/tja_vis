@@ -58,7 +58,7 @@ function parseLocs (data) {
 function buildData (arg) {
 	var runFilter = $('#tabeFilter')[0].checked;
 	var tm = Number($('#threshMath')[0].value);
-	var tr = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshRead')[0].value);
 
 	if (runFilter) {
 		if (isNaN(tm) || isNaN(tr)) {
@@ -1138,7 +1138,7 @@ function buildCorrAnalysis (compareScore) {
 	});
 
 	var compareBars = {
-	  labels: ["UNDER(MEN)", "EQUAL/OVER(MEN)", "UNDER(WOMEN)", "EQUAL/OVER(WOMEN)"],
+	  labels: ["UNDER(MEN)", "EQUAL+OVER(MEN)", "UNDER(WOMEN)", "EQUAL+OVER(WOMEN)"],
 	  datasets: [
 	      {
           fillColor: "rgba(255, 0, 0, 0.15)",
@@ -1184,21 +1184,39 @@ function buildCorrAnalysis (compareScore) {
 
 
 
-function canvas4Analysis () {
+function canvas4Analysis (gender) {
 	var d = data;
 	var tm = Number($('#threshMath')[0].value);
-	var tr = Number($('#threshMath')[0].value);
+	var tr = Number($('#threshRead')[0].value);
+	var tmta = Number($('#threshMTA')[0].value);
 
 	d = d.filter(function (ea) {
 		var hasVals = (ea.hasOwnProperty('tabe') && ea.tabe.hasOwnProperty('math') && ea.tabe.hasOwnProperty('read'));
+		var hasMTA = (ea.hasOwnProperty('mta') && ea.mta.hasOwnProperty('score') && ea.mta.hasOwnProperty('retest'));
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
-		return hasVals && !isNaN(nn);
+		var gender_ok = false;
+		if (gender !== undefined) {
+			if (gender == "female") {
+				gender_ok = ea.sex == "Female";
+			} else {
+				gender_ok = ea.sex == "Male";
+			}
+		} else {
+			gender_ok = true;
+		}
+		return hasVals && gender_ok && hasMTA && !isNaN(nn);
 	}).map(function (ea) {
 		var nn = Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''));
 		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
 		var pt = (m >= tm) && (r >= tr);
-		return {avg: nn, pass: pt};
+
+		var m_s = Number(ea.mta.score);
+		var m_r = Number(ea.mta.retest);
+		var m_high = Math.max(m_s, m_r);
+		var mta_pass = (m_high >= tmta);
+
+		return {avg: nn, pass: pt, mta_pass: mta_pass};
 	});
 
 	var counts = {};
@@ -1209,6 +1227,25 @@ function canvas4Analysis () {
 		if (x.pass) counts[x.avg].p += 1;
 		else counts[x.avg].f += 1;
 	});
+
+	var cts_mta = {};
+	d.forEach(function (x) { 
+		if (cts_mta[x.avg] == undefined) {
+			cts_mta[x.avg] = { n: 0, p: 0, f: 0 };
+		}
+		if (x.mta_pass) cts_mta[x.avg].p += 1;
+		else cts_mta[x.avg].f += 1;
+	});
+
+	var cts_both = {};
+	d.forEach(function (x) { 
+		if (cts_both[x.avg] == undefined) {
+			cts_both[x.avg] = { n: 0, p: 0, f: 0 };
+		}
+		if (x.pass && x.mta_pass) cts_both[x.avg].p += 1;
+		else cts_both[x.avg].f += 1;
+	});
+
 	var keys = ['0','10','20','30','40','50','60','70','80','90','100'];
 
 	var pct = [];
@@ -1218,8 +1255,32 @@ function canvas4Analysis () {
 		} else {
 			var all = counts[k].f + counts[k].p;
 			var pass = counts[k].p/all * 100;
-			pass = pass.toFixed(3);
+			pass = Number(pass.toFixed(1));
 			pct.push(pass);
+		}
+	});
+
+	var mta_pct = [];
+	keys.forEach(function (k) {
+		if (cts_mta[k] == undefined) {
+			mta_pct.push(0);
+		} else {
+			var all = cts_mta[k].f + cts_mta[k].p;
+			var pass = cts_mta[k].p/all * 100;
+			pass = Number(pass.toFixed(1));
+			mta_pct.push(pass);
+		}
+	});
+
+	var both_pct = [];
+	keys.forEach(function (k) {
+		if (cts_both[k] == undefined) {
+			both_pct.push(0);
+		} else {
+			var all = cts_both[k].f + cts_both[k].p;
+			var pass = cts_both[k].p/all * 100;
+			pass = Number(pass.toFixed(1));
+			both_pct.push(pass);
 		}
 	});
 
@@ -1238,7 +1299,7 @@ function canvas4Analysis () {
 	var line = {
 		labels: keys,
 		datasets: [{
-				fillColor: "rgba(151,187,205,0.2)",
+				fillColor: "rgba(151,187,205,0.05)",
 				strokeColor: "rgba(151,187,205,1)",
 				pointColor: "rgba(151,187,205,1)",
 				pointStrokeColor: "#fff",
@@ -1246,13 +1307,29 @@ function canvas4Analysis () {
 				pointHighlightStroke: "rgba(151,187,205,1)",
 				data: pct
 		}, {
-				fillColor: "rgba(220,220,220,0.2)",
+				fillColor: "rgba(220,220,220,0.05)",
 				strokeColor: "rgba(220,220,220,1)",
 				pointColor: "rgba(220,220,220,1)",
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: ctx
+				data: ct
+		}, {
+				fillColor: "rgba(255,0,0,0.05)",
+				strokeColor: "rgba(255,0,0,1)",
+				pointColor: "rgba(255,0,0,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(255,0,0,1)",
+				data: both_pct
+		}, {
+				fillColor: "rgba(0,153,0,0.05)",
+				strokeColor: "rgba(0,153,0,1)",
+				pointColor: "rgba(0,153,0,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(0,153,0,1)",
+				data: mta_pct
 		}]
 	};
 
