@@ -86,7 +86,10 @@
 					min="0" max="15" step="0.5" value="11">
 				<b>Reading: </b>
 				<input type="number" id="threshRead" 
-					min="0" max="15" step="0.5" value="10">
+					min="0" max="15" step="1" value="10">
+				<b>MTA: </b>
+				<input type="number" id="threshMTA" 
+					min="0" max="100" step="0.5" value="70">
 			</div>
 			
 
@@ -124,15 +127,15 @@
 
 
 
-			<div style="height: 450px">
-				<h4>Predictive Correlation Analysis</h4>
+			<div style="width:100%">
+				<h4>Correlation Analysis - TABE Only</h4>
 				<p style="max-width: 43%; float: left; padding-right: 20px">
 					Do our scores have any correlation with the TABE results? Run calculations by average score. Early results suggest Screendoor average scores don't correlate significantly with TABE scoring.
 
 					<br><br>
 
 					Threshold Screendoor Score (%): 
-					<input type="number" id="threshScreendoor"
+					<input type="number" class="threshScreendoor" id="threshScreendoor" onclick="updateAll_buildCorrAnalysis(this)"
 						min="0" max="100" step="10" value="90">
 					<button onclick="buildCorrAnalysis()">Rerun</button>
 
@@ -141,10 +144,9 @@
 						Running with the following TABE thresholds:
 						<br><span style="margin-left: 20px;">Math: <span id="threshMath_2">11</span></span>
 						<br><span style="margin-left: 20px;">Reading: <span id="threshRead_2">10</span></span>
-						<span style="float:right"><button id="scroll_to_threshold_setter" class="btn btn-default btn-sm">Change thresholds</button></span>
+						<span style="float:right"><button class="scroll_to_threshold_setter btn btn-default btn-sm">Change thresholds</button></span>
 					</span>
-
-					<br><br>
+					<br></i>
 
 					<br>Explanation of graph: </b><br>
 					<span style="font-weight:bold;color:red">Red</span> values indicate number of applications that fall below the set threshold for math or reading. <span style="font-weight:bold;color:blue">Blue</span> represents the count of those that are at or above that threshold.
@@ -155,6 +157,91 @@
 				</p>
 				
 				<canvas id="chart3" class="chart"></canvas>
+			</div>
+
+		</div>
+		<div class="container">
+
+			<div>
+				<h4>Correlation Analysis - MTA only</h4>
+				<p><i>If you do not use the click up down to change the threshold value, then be sure to click once in the box to make sure it updates all the values in the system...</i></p>
+				<p>
+					Threshold Screendoor Score (%): 
+					<input type="number" class="threshScreendoor" onclick="updateAll_buildCorrAnalysis(this)"
+						min="0" max="100" step="10" value="90">
+					<button onclick="buildCorrAnalysis()">Rerun</button>
+
+					<i><span style="float:right;">
+						Running with the following thresholds:  
+							<b>Math:</b> <span id="threshMath_2">11</span> and 
+							<b>Reading:</b> <span id="threshRead_2">10</span> and 
+							<b>MTA:</b> <span id="threshMTA_2">70</span> 
+						<button class="scroll_to_threshold_setter btn btn-default btn-sm">Change thresholds</button>
+					</span></i>
+
+					<br><br>
+					In terms of colors, <span style="color:red">red</span> indicates those that fell below either math or reading TABE threshold in the corresponding category (e.g. group of individuals who received "UNDER" the set Screendoor score or "EQUAL" to the set Screendoor score or "OVER" the set Screendoor score). Similarly, <span style="color:blue">blue</span> is those that are over the set TABE threshold for that group. For MTA scores, <span style="color:orange">orange</span> means under the set MTA score threshold (default is 70%) and <span style="color:green">green</span> is at or over that same threshold (again, for the corresponding group).
+				</p>
+				
+				<canvas id="chart3b" class="chart"></canvas>
+			</div>	
+
+
+
+
+
+			<div>
+				<h4>Correlation Analysis - MTA and Tabe</h4>
+				<p><i>If you do not use the click up down to change the threshold value, then be sure to click once in the box to make sure it updates all the values in the system...</i></p>
+				<p>
+					Threshold Screendoor Score (%): 
+					<input type="number" class="threshScreendoor" onclick="updateAll_buildCorrAnalysis(this)"
+						min="0" max="100" step="10" value="90">
+					<button onclick="buildCorrAnalysis()">Rerun</button>
+
+					<i><span style="float:right;">
+						Running with the following thresholds:  
+							<b>Math:</b> <span id="threshMath_2">11</span> and 
+							<b>Reading:</b> <span id="threshRead_2">10</span> and 
+							<b>MTA:</b> <span id="threshMTA_2">70</span> 
+						<button class="scroll_to_threshold_setter btn btn-default btn-sm">Change thresholds</button>
+					</span></i>
+
+					<br><br>
+					In terms of colors, <span style="color:red">red</span> indicates those that fell below either math or reading TABE threshold in the corresponding category (e.g. group of individuals who received "UNDER" the set Screendoor score or "EQUAL" to the set Screendoor score or "OVER" the set Screendoor score). Similarly, <span style="color:blue">blue</span> is those that are over the set TABE threshold for that group. For MTA scores, <span style="color:orange">orange</span> means under the set MTA score threshold (default is 70%) and <span style="color:green">green</span> is at or over that same threshold (again, for the corresponding group).
+				</p>
+				
+				<canvas id="chart3c" class="chart"></canvas>
+			</div>
+
+
+
+
+			<div>
+				<h4>Correlation Analysis - MTA and Tabe by Percentages</h4>
+				<p><i>If you do not use the click up down to change the threshold value, then be sure to click once in the box to make sure it updates all the values in the system...</i></p>
+				<p>
+					Threshold Screendoor Score (%): 
+					<input type="number" class="threshScreendoor" onclick="updateAll_buildCorrAnalysis(this)"
+						min="0" max="100" step="10" value="90">
+					<button onclick="buildCorrAnalysis()">Rerun</button>
+
+					<i><span style="float:right;">
+						Running with the following thresholds:  
+							<b>Math:</b> <span id="threshMath_2">11</span> and 
+							<b>Reading:</b> <span id="threshRead_2">10</span> and 
+							<b>MTA:</b> <span id="threshMTA_2">70</span> 
+						<button class="scroll_to_threshold_setter btn btn-default btn-sm">Change thresholds</button>
+					</span></i>
+
+					<br><br>
+					The purpose of this graph is the same as the prior except that results are shown as percentages (%). Thus, for each category, we are shown the percentage of all that failed.
+					<br><br>
+					In terms of colors, <span style="color:red">red</span> indicates those that fell below either math or reading TABE threshold in the corresponding category (e.g. group of individuals who received "UNDER" the set Screendoor score or "EQUAL" to the set Screendoor score or "OVER" the set Screendoor score). Similarly, <span style="color:blue">blue</span> is those that are over the set TABE threshold for that group. For MTA scores, <span style="color:orange">orange</span> means under the set MTA score threshold (default is 70%) and <span style="color:green">green</span> is at or over that same threshold (again, for the corresponding group).
+				</p>
+				
+				<p><b><i>Note: Y Axis in Percentages!</i></b></p>
+				<canvas id="chart3d" class="chart"></canvas>
 			</div>
 
 
@@ -208,17 +295,25 @@
 			window.location.href = "wordclouds.html"
 		};
 
+		function updateAll_buildCorrAnalysis (item) {
+			$(".threshScreendoor").each(function (e) {
+				$(".threshScreendoor")[e].value = item.value;
+			});
+		};
+
 		function updateThreshValsElsewhere () {
 			var tm = Number($('#threshMath')[0].value);
 			var tr = Number($('#threshRead')[0].value);
+			var tmta = Number($('#threshMTA')[0].value);
 
 			$("#threshMath_2").each(function (e) {
 				$("#threshMath_2")[e].innerHTML = tm;
 				$("#threshRead_2")[e].innerHTML = tr;
+				$("#threshMTA_2")[e].innerHTML = tmta;
 			})
 		}
 
-		$("#scroll_to_threshold_setter").click(function() {
+		$(".scroll_to_threshold_setter").click(function() {
 		  $('html, body').animate({
 		    scrollTop: $("#threshold_setter").offset().top
 		  }, 1000);

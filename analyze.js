@@ -686,6 +686,7 @@ function buildCorrAnalysis (compareScore) {
 	var d = data;
 	var tm = Number($('#threshMath')[0].value);
 	var tr = Number($('#threshRead')[0].value);
+	var tmta = Number($('#threshMTA')[0].value);
 
 	if (compareScore == undefined)
 		compareScore = Number($('#threshScreendoor')[0].value)
@@ -746,7 +747,6 @@ function buildCorrAnalysis (compareScore) {
 
 		if (r >= tr) DOreadAgg.pass += 1;
 		else DOreadAgg.fail += 1;
-
 	});
 
 	var fails = [DUmathAgg.fail, DUreadAgg.fail, DEmathAgg.fail, DEreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
@@ -779,7 +779,281 @@ function buildCorrAnalysis (compareScore) {
 
 	var ctx = document.getElementById("chart3").getContext("2d");
 	chart3 = new Chart(ctx).Bar(compareBars, {});
+
+
+	// Part 2: Include MTA results as well alone
+
+	d = d.filter(function (ea) {
+		var hasVals = (ea.hasOwnProperty('mta') && ea.mta.hasOwnProperty('score') && ea.mta.hasOwnProperty('retest'));
+		return hasVals && !isNaN(Number(Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', ''))));
+	});
+	var dUnder = d.filter(function (ea) {return Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', '')) < compareScore;});
+	var dEqual = d.filter(function (ea) {return Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', '')) == compareScore;});
+	var dOver = d.filter(function (ea) {return Number(ea.avg_score.replaceAll('%', '').replaceAll(' ', '').replaceAll('"', '')) > compareScore;});
+
+	var DUmta_sc = {pass: 0, fail: 0};
+	var DUmta_rt = {pass: 0, fail: 0};
+	dUnder.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta) DUmta_sc.pass += 1;
+		else if (Number(m) !== 0) DUmta_sc.fail += 1;
+
+		if (r >= tmta) DUmta_rt.pass += 1;
+		else if (Number(r) !== 0) DUmta_rt.fail += 1;
+	});
+	
+	var DEmta_sc = {pass: 0, fail: 0};
+	var DEmta_rt = {pass: 0, fail: 0};
+	dEqual.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta) DEmta_sc.pass += 1;
+		else if (Number(m) !== 0) DEmta_sc.fail += 1;
+
+		if (r >= tmta) DEmta_rt.pass += 1;
+		else if (Number(r) !== 0) DEmta_rt.fail += 1;
+	});
+	
+	var DOmta_sc = {pass: 0, fail: 0};
+	var DOmta_rt = {pass: 0, fail: 0};
+	dOver.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+
+		if (m >= tmta) DOmta_sc.pass += 1;
+		else if (Number(m) !== 0) DOmta_sc.fail += 1;
+
+		if (r >= tmta) DOmta_rt.pass += 1;
+		else if (Number(r) !== 0) DOmta_rt.fail += 1;
+	});
+
+
+	var fails = [DUmta_sc.fail, DUmta_rt.fail, DEmta_sc.fail, DEmta_rt.fail, DOmta_sc.fail, DOmta_rt.fail];
+	var passes = [DUmta_sc.pass, DUmta_rt.pass, DEmta_sc.pass, DEmta_rt.pass, DOmta_sc.pass, DOmta_rt.pass];
+
+	var compareBars = {
+	  labels: ["UNDER (First)", "UNDER (Retest)", "EQUAL (First)", "EQUAL (Retest)", "OVER (First)", "OVER (Retest)"],
+	  datasets: [
+	      {
+          fillColor: "rgba(216, 128, 26, 0.15)",
+          strokeColor: "rgba(216, 128, 26, 0.25)",
+          highlightFill: "rgba(216, 128, 26, 0.75)",
+          highlightStroke: "rgba(216, 128, 26, 1)",
+          data: fails
+	      },
+	      {
+          fillColor: "rgba(6,192,162,0.5)",
+          strokeColor: "rgba(6,192,162,0.8)",
+          highlightFill: "rgba(6,192,162,0.75)",
+          highlightStroke: "rgba(6,192,162,1)",
+          data: passes
+	      }
+	  ]
+	};
+
+
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
+	}
+
+	var ctx = document.getElementById("chart3b").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
+
+
+
+	// Now for the join version Chart 3c
+	
+	var fails_tabe = [DUmathAgg.fail, DUreadAgg.fail, DEmathAgg.fail, DEreadAgg.fail, DOmathAgg.fail, DOreadAgg.fail];
+	var passes_tabe = [DUmathAgg.pass, DUreadAgg.pass, DEmathAgg.pass, DEreadAgg.pass, DOmathAgg.pass, DOreadAgg.pass];
+
+	var fails_mta = [DUmta_sc.fail, DUmta_rt.fail, DEmta_sc.fail, DEmta_rt.fail, DOmta_sc.fail, DOmta_rt.fail];
+	var passes_mta = [DUmta_sc.pass, DUmta_rt.pass, DEmta_sc.pass, DEmta_rt.pass, DOmta_sc.pass, DOmta_rt.pass];
+
+	var compareBars = {
+	  labels: ["UNDER (First)", "UNDER (Retest)", "EQUAL (First)", "EQUAL (Retest)", "OVER (First)", "OVER (Retest)"],
+	  datasets: [
+	      {
+          fillColor: "rgba(255, 0, 0, 0.15)",
+          strokeColor: "rgba(255, 0, 0, 0.25)",
+          highlightFill: "rgba(255, 0, 0, 0.75)",
+          highlightStroke: "rgba(255, 0, 0, 1)",
+          data: fails_tabe
+	      },
+	      {
+          fillColor: "rgba(151,187,205,0.5)",
+          strokeColor: "rgba(151,187,205,0.8)",
+          highlightFill: "rgba(151,187,205,0.75)",
+          highlightStroke: "rgba(151,187,205,1)",
+          data: passes_tabe
+	      },
+	      {
+          fillColor: "rgba(216, 128, 26, 0.15)",
+          strokeColor: "rgba(216, 128, 26, 0.25)",
+          highlightFill: "rgba(216, 128, 26, 0.75)",
+          highlightStroke: "rgba(216, 128, 26, 1)",
+          data: fails_mta
+	      },
+	      {
+          fillColor: "rgba(6,192,162,0.5)",
+          strokeColor: "rgba(6,192,162,0.8)",
+          highlightFill: "rgba(6,192,162,0.75)",
+          highlightStroke: "rgba(6,192,162,1)",
+          data: passes_mta
+	      }
+	  ]
+	};
+
+
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
+	}
+
+	var ctx = document.getElementById("chart3c").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
+
+
+	// Now for the join version with PERCENTAGES Chart 3d
+
+	var DU_tabe = {pass: 0, fail: 0};
+	dUnder.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm && r >= tr) DU_tabe.pass += 1;
+		else DU_tabe.fail += 1;
+	});
+	
+	var DE_tabe = {pass: 0, fail: 0};
+	dEqual.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm && r >= tr) DE_tabe.pass += 1;
+		else DE_tabe.fail += 1;
+	});
+	
+	var DO_tabe = {pass: 0, fail: 0};
+	dOver.forEach(function (ea) {
+		var m = Number(ea.tabe.math.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = Number(ea.tabe.read.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tm && r >= tr) DE_tabe.pass += 1;
+		else DE_tabe.fail += 1;
+	});
+
+	fails_tabe = [DU_tabe.fail, DE_tabe.fail, DO_tabe.fail];
+	passes_tabe = [DU_tabe.pass, DE_tabe.pass, DO_tabe.pass];
+
+
+	tabe_sum = 0;
+	fails_tabe.forEach(function (ea) {
+		tabe_sum += ea;
+	});
+	passes_tabe.forEach(function (ea) {
+		tabe_sum += ea;
+	});
+	fails_tabe = fails_tabe.map(function (ea) {
+		ea = Number((100*ea/tabe_sum).toFixed(1));
+		return ea;
+	});
+	passes_tabe = passes_tabe.map(function (ea) {
+		ea = Number((100*ea/tabe_sum).toFixed(1));
+		return ea;
+	});
+
+
+
+	var DU_mta = {pass: 0, fail: 0};
+	dUnder.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta || r >= tmta) DU_mta.pass += 1;
+		else if (m !== 0) DU_mta.fail += 1;
+	});
+	
+	var DE_mta = {pass: 0, fail: 0};
+	dEqual.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta || r >= tmta) DE_mta.pass += 1;
+		else if (m !== 0) DE_mta.fail += 1;
+	});
+	
+	var DO_mta = {pass: 0, fail: 0};
+	dOver.forEach(function (ea) {
+		var m = ea.mta.score == "" ? 0 : Number(ea.mta.score.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		var r = ea.mta.retest == "" ? 0 : Number(ea.mta.retest.replaceAll(' ', '').replaceAll('*', '').replaceAll('+', ''));
+		
+		if (m >= tmta || r >= tmta) DO_mta.pass += 1;
+		else if (m !== 0) DO_mta.fail += 1;
+	});
+
+	mta_sum = 0;
+	fails_mta.forEach(function (ea) {
+		mta_sum += ea;
+	});
+	passes_mta.forEach(function (ea) {
+		mta_sum += ea;
+	});
+	fails_mta = fails_mta.map(function (ea) {
+		ea = Number((100*ea/mta_sum).toFixed(1));
+		return ea;
+	});
+	passes_mta = passes_mta.map(function (ea) {
+		ea = Number((100*ea/mta_sum).toFixed(1));
+		return ea;
+	});
+
+	var compareBars = {
+	  labels: ["UNDER", "EQUAL", "OVER"],
+	  datasets: [
+	      {
+          fillColor: "rgba(255, 0, 0, 0.15)",
+          strokeColor: "rgba(255, 0, 0, 0.25)",
+          highlightFill: "rgba(255, 0, 0, 0.75)",
+          highlightStroke: "rgba(255, 0, 0, 1)",
+          data: fails_tabe
+	      },
+	      {
+          fillColor: "rgba(151,187,205,0.5)",
+          strokeColor: "rgba(151,187,205,0.8)",
+          highlightFill: "rgba(151,187,205,0.75)",
+          highlightStroke: "rgba(151,187,205,1)",
+          data: passes_tabe
+	      },
+	      {
+          fillColor: "rgba(216, 128, 26, 0.15)",
+          strokeColor: "rgba(216, 128, 26, 0.25)",
+          highlightFill: "rgba(216, 128, 26, 0.75)",
+          highlightStroke: "rgba(216, 128, 26, 1)",
+          data: fails_mta
+	      },
+	      {
+          fillColor: "rgba(6,192,162,0.5)",
+          strokeColor: "rgba(6,192,162,0.8)",
+          highlightFill: "rgba(6,192,162,0.75)",
+          highlightStroke: "rgba(6,192,162,1)",
+          data: passes_mta
+	      }
+	  ]
+	};
+
+
+	if (chart3 !== undefined && typeof chart3 == 'object') {
+		chart3.destroy();
+	}
+
+	var ctx = document.getElementById("chart3d").getContext("2d");
+	chart3 = new Chart(ctx).Bar(compareBars, {});
 };
+
+
+
 
 function canvas4Analysis () {
 	var d = data;
