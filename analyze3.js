@@ -114,7 +114,7 @@ function draw_graphs () {
 		});
 	};
 
-	var graph_info_2a = {labels: keys, datasets: [{fillColor: "orange", data: pass_tabe.all}]};
+	var graph_info_2a = {labels: keys, datasets: [{fillColor: "blue", data: pass_tabe.men}, {fillColor: "red", data: pass_tabe.women}, {fillColor: "orange", data: pass_tabe.all}]};
 	var ctx = document.getElementById("chart_q2a").getContext("2d");
 	try { q1d_chart.destroy(); } catch (e) {}
 	q2a_chart = new Chart(ctx).Bar(graph_info_2a, {});
@@ -202,8 +202,7 @@ function draw_graphs () {
 		pct_pass_mta_all_based_on_tot_pop[gender] = pctg;
 	};
 
-	// var graph_info_3a = {labels: keys, datasets: [{fillColor: "blue", data: pass_mta.men}, {fillColor: "red", data: pass_mta.women}, {fillColor: "orange", data: pass_mta.all}]};
-	var graph_info_3a = {labels: keys, datasets: [{fillColor: "orange", data: pass_mta.all}]};
+	var graph_info_3a = {labels: keys, datasets: [{fillColor: "blue", data: pass_mta.men}, {fillColor: "red", data: pass_mta.women}, {fillColor: "orange", data: pass_mta.all}]};
 	var ctx = document.getElementById("chart_q3a").getContext("2d");
 	try { q3a_chart.destroy(); } catch (e) {}
 	q3a_chart = new Chart(ctx).Bar(graph_info_3a, {});
