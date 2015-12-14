@@ -45,14 +45,21 @@
 
 		<div class="container">
 			<button class="btn btn-info pull-right" 
-					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 20px;" 
+					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 19px;" 
 					onclick="gowordlcouds()">
 				<div class="glyphicon glyphicon-cloud"></div><div class="glyphicon glyphicon-cloud"></div><div class="glyphicon glyphicon-cloud"></div>
 				<br><b>New!</b><br>Word Clouds<br><i><small>Click to visit.</small></i>
 			</button>
 
 			<button class="btn btn-info pull-right" 
-					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 140px;" 
+					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 133px;" 
+					onclick="gopage3()">
+					<div class="glyphicon glyphicon-eye-open"></div>
+				<br><b>Page 3</b><br>JPF 3 Chart<br>Viz<br>
+			</button>
+
+			<button class="btn btn-info pull-right" 
+					style="border-radius: 0px; z-index: 99999; position:absolute; top: 20px; right: 240px;" 
 					onclick="gopage2()">
 					<div class="glyphicon glyphicon-eye-open"></div>
 				<br><b>Page 2</b><br>Additional<br>Viz<br>
@@ -344,6 +351,9 @@
 		};
 		function gopage2 () {
 			window.location.href = "part2.html"
+		};
+		function gopage3 () {
+			window.location.href = "part3.html"
 		};
 
 		function updateAll_buildCorrAnalysis (item) {
