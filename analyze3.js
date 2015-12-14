@@ -167,13 +167,13 @@ function draw_graphs () {
 			ea.forEach(function (prsn) {
 				try {
 					var pass = true;
-					if (Number(prsn.tabe.math.replace(/\D/g,'')) < pass_vals.tabe_math) pass = false;
-					if (Number(prsn.tabe.read.replace(/\D/g,'')) < pass_vals.tabe_read) pass = false;
+					if (Number(prsn.tabe.math.replace(/[^\d.-]/g, '')) < pass_vals.tabe_math) pass = false;
+					if (Number(prsn.tabe.read.replace(/[^\d.-]/g, '')) < pass_vals.tabe_read) pass = false;
 
 					if (pass) {
 						var mta = false, retest = false;
-						if (Number(prsn.mta.score.replace(/\D/g,'')) >= pass_vals.mta) mta = true;
-						if (Number(prsn.mta.retest.replace(/\D/g,'')) >= pass_vals.mta) retest = true;
+						if (Number(prsn.mta.score.replace(/[^\d.-]/g, '')) >= pass_vals.mta) mta = true;
+						if (Number(prsn.mta.retest.replace(/[^\d.-]/g, '')) >= pass_vals.mta) retest = true;
 						if (mta || retest) passed += 1;
 					}
 				} catch (e) {
