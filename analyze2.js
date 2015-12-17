@@ -110,14 +110,54 @@ function q2_draw (key) {
 		return to_return;
 	});
 
+
+
 	var mentioned = relevant.filter(function (ea) {
 		var tb = ea.textBlob;
 		var ok = false;
-		if (tb.indexOf("harlem") > -1 && tb.indexOf("children") > -1 && tb.indexOf("zone") > -1) {
-			ok = true;
-		} else if (tb.indexOf("npower") > -1) {
-			ok = true;
-		}
+		if (tb.indexOf("harlem") > -1 && tb.indexOf("children") > -1 && tb.indexOf("zone") > -1) { ok = true; } 
+		else if (tb.indexOf("npower") > -1) { ok = true; } 
+		else if (tb.indexOf("npower") > -1)  { ok =true; }
+		else if (tb.indexOf("women") > -1 && tb.indexOf("in") > -1 && tb.indexOf("need") > -1)  { ok =true; }
+		else if (tb.indexOf("library") > -1)  { ok =true; }
+		else if (tb.indexOf("nypl") > -1)  { ok =true; }
+		else if (tb.indexOf("silicon") > -1 && tb.indexOf("harlem") > -1)  { ok =true; }
+		else if (tb.indexOf("dol") > -1)  { ok =true; }
+		else if (tb.indexOf("department") > -1 && tb.indexOf("of") > -1 && tb.indexOf("labor") > -1)  { ok =true; }
+		else if (tb.indexOf("nytm") > -1)  { ok =true; }
+		else if (tb.indexOf("york") > -1 && tb.indexOf("tech") > -1 && tb.indexOf("meetup") > -1)  { ok =true; }
+		else if (tb.indexOf("blacks") > -1 && tb.indexOf("in") > -1 && tb.indexOf("tech") > -1)  { ok =true; }
+		else if (tb.indexOf("coalition") > -1 && tb.indexOf("for") > -1 && tb.indexOf("queens") > -1)  { ok =true; }
+		else if (tb.indexOf("perscholas") > -1)  { ok =true; }
+		else if (tb.indexOf("scholas") > -1)  { ok =true; }
+		else if (tb.indexOf("streetwise") > -1 && tb.indexOf("partners") > -1)  { ok =true; }
+		else if (tb.indexOf("laguardia") > -1)  { ok =true; }
+		else if (tb.indexOf("black") > -1 && tb.indexOf("girls") > -1 && tb.indexOf("code") > -1)  { ok =true; }
+		else if (tb.indexOf("whedco") > -1)  { ok =true; }
+		else if (tb.indexOf("women") > -1 && tb.indexOf("housing") > -1 && tb.indexOf("economic") > -1 && tb.indexOf("development") > -1)  { ok =true; }
+		else if (tb.indexOf("wdc") > -1)  { ok =true; }
+		else if (tb.indexOf("year") > -1 && tb.indexOf("up") > -1)  { ok =true; }
+		else if (tb.indexOf("dev") > -1 && tb.indexOf("bootcamp") > -1)  { ok =true; }
+		else if (tb.indexOf("bootcamp") > -1)  { ok =true; }
+		else if (tb.indexOf("wdc") > -1)  { ok =true; }
+		else if (tb.indexOf("bronx") > -1 && tb.indexOf("tech") > -1 && tb.indexOf("meetup") > -1)  { ok =true; }
+		else if (tb.indexOf("sus") > -1)  { ok =true; }
+		else if (tb.indexOf("services") > -1 && tb.indexOf("underserved") > -1)  { ok =true; }
+		else if (tb.indexOf("street") > -1 && tb.indexOf("squash") > -1)  { ok =true; }
+		else if (tb.indexOf("brooklyn") > -1 && tb.indexOf("borough") > -1 && tb.indexOf("president") > -1)  { ok =true; }
+		else if (tb.indexOf("workforce") > -1 && tb.indexOf("one") > -1)  { ok =true; }
+		else if (tb.indexOf("workforce") > -1 && tb.indexOf("1") > -1)  { ok =true; }
+		else if (tb.indexOf("general") > -1 && tb.indexOf("assembly") > -1)  { ok =true; }
+		else if (tb.indexOf("girl") > -1 && tb.indexOf("develop") > -1)  { ok =true; }
+		else if (tb.indexOf("queens") > -1 && tb.indexOf("college") > -1)  { ok =true; }
+		else if (tb.indexOf("henry") > -1 && tb.indexOf("street") > -1)  { ok =true; }
+		else if (tb.indexOf("ace") > -1)  { ok =true; }
+		else if (tb.indexOf("manhattan") > -1 && tb.indexOf("borough") > -1 && tb.indexOf("president") > -1)  { ok =true; }
+		else if (tb.indexOf("borough") > -1 && tb.indexOf("president") > -1)  { ok =true; }
+		else if (tb.indexOf("single") > -1 && tb.indexOf("stops") > -1)  { ok =true; }
+		else if (tb.indexOf("sus") > -1)  { ok =true; }
+		else if (tb.indexOf("sus") > -1)  { ok =true; }
+		else if (tb.indexOf("sus") > -1)  { ok =true; }
 		return ok;
 	})
 
